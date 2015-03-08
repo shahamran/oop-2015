@@ -1,0 +1,13 @@
+
+class Store {
+	
+	final int MAX_NUM_OF_PRODUCT_TYPES = 5;
+	int balance;			
+	ProductType[] productTypeArray;
+
+	Store() {
+		balance = 0;
+		productTypeArray = new ProductType[MAX_NUM_OF_PRODUCT_TYPES];
+	}
+
+}
