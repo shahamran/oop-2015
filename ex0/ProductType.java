@@ -1,4 +1,3 @@
-
 class ProductType {
 
     String name;
@@ -8,16 +7,15 @@ class ProductType {
     final String CLOSER = "]";
     final String SEP = ",";
 
-    ProductType(String productName,
-                int productStorePrice,
-                int productCustomerPrice){
+    ProductType(String productName, int productStorePrice,
+                                    int productCustomerPrice){
         name = productName;
         customerPrice = productCustomerPrice;
         storePrice = productStorePrice;
     }
 
     String stringRepresentation(){
-        return OPENER + name + SEP + storePrice + \
+        return OPENER + name + SEP + storePrice + 
                SEP + customerPrice + CLOSER;
     }
     

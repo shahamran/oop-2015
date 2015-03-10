@@ -1,0 +1,15 @@
+class TestProduct {
+    
+    public static void main(String[] args){
+        if (args.length != 3){
+            System.out.println(args.length);
+        }
+        String name = args[0];
+        int storePrice = Integer.valueOf(args[1]);
+        int customerPrice = Integer.valueOf(args[2]);
+        ProductType myProduct = new ProductType(name, storePrice, customerPrice);
+        System.out.println(myProduct.stringRepresentation());
+        System.out.println(myProduct.profitPerUnit());
+    
+    }
+}

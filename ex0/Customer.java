@@ -9,16 +9,13 @@ class Customer {
     String CLOSER = "]";
     String SEP = ",";
     String SPACE = " ";
+    String NEW_LINE = "\n";
 
 	Customer(String customerName, String customerAddress, int customerBalance){
 		name = customerName;
         address = customerAddress;
         balance = customerBalance;
-        log = "Shopping log for customer:" + name;
-	}
-
-	int maximumAffordableQuantity(ProductType productType){
-		return balance / productType.customerPrice;
+        log = "Shopping log for customer: " + name;
 	}
 
     String stringRepresentation(){
@@ -51,11 +48,7 @@ class Customer {
     }
 
     void addToLog(int quantity, ProductType productType){
-        String ending = "";
-        if (quantity > 1){
-            ending = "s";
-        }
-        log += "\n" + quantity + SPACE + productType.name + ending;
+        log += NEW_LINE + quantity + SPACE + productType.name;
     }
 	
 }
