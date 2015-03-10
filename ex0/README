@@ -9,13 +9,24 @@ ransha
 =  Description:  =
 ==================
 
-Implementation of a simple java code.
+A simple implementation of a shopping system that consists of products, 
+customers and stores. Each one is implemented in a seperate class.
 
 =============================
 =  List of submitted files: =
 =============================
 
 README - This file.
-ProductType.java - 
-Customer.java - 
-Store.java - 
+ProductType.java - contains methods that set the behavior of product objects
+                   in the shopping system such as price and name.
+Customer.java - consists of method that set the behavior of customer objects.
+                The customer has a balance and can purchase products.
+Store.java - Sets the behavior of a store object. The store can have up to
+             5 product types that it can sell to customers and make profit.
+
+=========
+= NOTES =
+=========
+
+In some of the doc-strings I was using the term 'product' instead of
+ProductType, hope it's still understandable :)
