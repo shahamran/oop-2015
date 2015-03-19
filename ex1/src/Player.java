@@ -118,24 +118,74 @@ public class Player {
 	}
 	
 	/*
+	 * Checks whether a row has unmarked sticks. If so, returns the index of
+	 * the first one. otherwise, returns 0.
+	 */
+	private boolean isRowHasUnmarked(Board board, int aRow) {
+		int rowLength = board.getRowLength(aRow);
+		for (int i = 1; i <= rowLength; i++){
+			if ( board.isStickUnmarked(aRow, i) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/*
 	 * Produces a random move.
 	 */
 	private Move produceRandomMove(Board board){
-		/* You need to implement this method */
+		Random myRandom = new Random();
+		int maxRow = board.getNumberOfRows();
+		int randRow = 0;
+		boolean hasUnmarked = false;
+		while (!hasUnmarked){
+			randRow = myRandom.nextInt(maxRow) + 1;
+			hasUnmarked = isRowHasUnmarked(board,randRow);
+		}
+
+		int rowLength = board.getRowLength(randRow);
+		int randLeft = myRandom.nextInt(rowLength) + 1;
+		int randSequence = myRandom.nextInt(rowLength - randLeft + 1) + 1;
+		return new Move(randRow, randLeft, randLeft + randSequence - 1);
 	}
 	
 	/*
 	 * Produce some intelligent strategy to produce a move
 	 */
 	private Move produceSmartMove(Board board){
-		/* You need to implement this method */
+		Move myMove = null;
+		return myMove;
 	}
 	
 	/*
 	 * Interact with the user to produce his move.
 	 */
 	private Move produceHumanMove(Board board){
-		/* You need to implement this method */
+		int myRow,myLeft,myRight;
+		int input;
+		while(true) {
+			System.out.print("Press 1 to display the board.  ");
+			System.out.println("Press 2 to make a move:");
+			input = scanner.nextInt();
+			switch (input){
+				case 1:
+					System.out.println(board);
+					break;
+				case 2:
+					System.out.println("Enter the row number:");
+					myRow = scanner.nextInt();
+					System.out.println("Enter the index of the " +
+							 		             "leftmost stick:");
+					myLeft = scanner.nextInt();
+					System.out.println("Enter the index of the " +
+							                    "rightmost stick:");
+					myRight = scanner.nextInt();
+					return new Move(myRow,myLeft,myRight);
+				default:
+					System.out.println("Unknown input.");
+			}
+		}
 	}
 	
 	/*
