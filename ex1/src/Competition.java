@@ -46,10 +46,10 @@ public class Competition extends java.lang.Object {
 	 * @param numberOfRounds the number of rounds to run.
 	 */
 	public void playMultipleRounds(int numberOfRounds) {
-		if (displayMessage) {
-			System.out.println("Welcome to the sticks game!");
-		}
 		for (int round = 1; round <= numberOfRounds; round ++) {
+			if (displayMessage) {
+				System.out.println("Welcome to the sticks game!");
+			}
 			currentPlayer = player1;
 			board = new Board();
 			playGame();
