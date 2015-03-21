@@ -6,19 +6,31 @@ import java.util.Scanner;
  */
 public class Competition extends java.lang.Object {
 	private static String DOTS = ":";
+	private static final int YOUR_TURN = 1, INVALID_MOVE = 2, WIN_MSG = 3;
+	
 	private int player1Wins, totalRounds, numOfSticks = 1;
 	private boolean displayMessage;
+	// The 2 players objects, and one that keeps track of the current player.
 	private Player player1, player2, currentPlayer;
 	private Board board;
-	private static final int YOUR_TURN = 1, INVALID_MOVE = 2,
-			                      MOVE_MADE = 3, WIN_MSG = 4;
-	
-	public Competition(Player player1, Player player2, boolean displayMessage){
+
+	/**
+	 * Constructs a new Competition object with the given parameters.
+	 * @param player1 The first player in the game
+	 * @param player2 The second player in the game
+	 * @param displayMessage call with true if messages should be printed, false otherwise.
+	 */
+	public Competition(Player player1, Player player2, boolean displayMessage) {
 		this.player1 = player1; this.player2 = player2;
 		this.displayMessage = displayMessage;
 	}
 	
-	public int getPlayerScore(int playerPosition){
+	/**
+	 * Returns the scores of a selected player.
+	 * @param playerPosition 1 for player 1, 2 for player 2. 
+	 * @return the player's score.
+	 */
+	public int getPlayerScore(int playerPosition) {
 		switch (playerPosition) {
 			case 1:
 				return player1Wins;
@@ -29,11 +41,16 @@ public class Competition extends java.lang.Object {
 		}
 	}
 	
-	public void playMultipleRounds(int numberOfRounds){
-		currentPlayer = player1;
-		if (displayMessage)
+	/**
+	 * Runs the game for a given number of rounds.
+	 * @param numberOfRounds the number of rounds to run.
+	 */
+	public void playMultipleRounds(int numberOfRounds) {
+		if (displayMessage) {
 			System.out.println("Welcome to the sticks game!");
-		for (int round = 1; round <= numberOfRounds; round++){
+		}
+		for (int round = 1; round <= numberOfRounds; round ++) {
+			currentPlayer = player1;
 			board = new Board();
 			playGame();
 		}
@@ -41,10 +58,15 @@ public class Competition extends java.lang.Object {
 				                                getPlayerScore(2));
 	}
 	
-	private void printMessage(int msgNum){
-		if (!displayMessage)
+	/*
+	 * Prints a specific message only if displayMessage == true.
+	 * Used by playGame() method.
+	 */
+	private void printMessage(int msgNum) {
+		if (!displayMessage) {
 			return;
-		switch (msgNum){
+		}
+		switch (msgNum) {
 		case YOUR_TURN:
 			System.out.println("Player " + currentPlayer.getPlayerId() +
                                                     ", it is now your turn!");
@@ -53,36 +75,56 @@ public class Competition extends java.lang.Object {
 			if (currentPlayer.getPlayerType() == Player.HUMAN)
 				System.out.println("Invalid move.  Enter another:");
 			break;
-			
 		case WIN_MSG:
 			System.out.println("Player " + currentPlayer.getPlayerId() + " won!");
 			break;
 		}
 	}
 	
-	private void playGame(){
+	/*
+	 * Sets the currentPlayer object to the next player.
+	 * This is implemented in a different method to make updates
+	 * easier (if the game will be changed and more players will be playing) 
+	 */
+	private void switchPlayers() {
+		if (currentPlayer == player1) {
+			currentPlayer = player2;
+		} else {
+			currentPlayer = player1;
+		}
+	}
+	
+	/*
+	 * Play one round of the game.
+	 */
+	private void playGame() {
 		numOfSticks = board.getNumberOfUnmarkedSticks();
-		while (numOfSticks > 0){
+		Move myMove = null;
+		
+		// Loop until this round is over.
+		while (numOfSticks > 0) {
 			printMessage(YOUR_TURN);
 			int success = 0;
-			Move myMove = null;
+			// Loop until a valid move is made.
 			while (success <= 0) {
 				myMove = currentPlayer.produceMove(board);
 				success = board.markStickSequence(myMove);
-				if (success <= 0)
+				if (success <= 0) {
 					printMessage(INVALID_MOVE);
+				}
 			}
-			if (displayMessage)
+			
+			if (displayMessage) {
 				System.out.println("Player " + currentPlayer.getPlayerId() +
 						                         " made the move: " + myMove);
-			if (currentPlayer == player1) {
-				currentPlayer = player2;
-			} else {
-				currentPlayer = player1;
 			}
+			switchPlayers(); // Switch turns.
+			// After each move, the number of sticks changes.
 			numOfSticks = board.getNumberOfUnmarkedSticks();
 		}
+		
 		printMessage(WIN_MSG);
+		// Update scores.
 		if (currentPlayer == player1) {
 			player1Wins ++;
 		}
@@ -128,20 +170,18 @@ public class Competition extends java.lang.Object {
 		Scanner scanner = new Scanner(System.in);
 		boolean printMessage = false;
 		
-		Player player1 = new Player(p1Type,1,scanner);
-		Player player2 = new Player(p2Type,2,scanner);
-		if (p1Type == Player.HUMAN || p2Type == Player.HUMAN){
+		Player player1 = new Player(p1Type, 1, scanner);
+		Player player2 = new Player(p2Type, 2, scanner);
+		if (p1Type == Player.HUMAN || p2Type == Player.HUMAN) {
 			printMessage = true;
 		}
-		Competition myCompetition = new Competition(player1,player2,printMessage);
+		
+		Competition myCompetition = new Competition(player1, player2,
+															 printMessage);
 		System.out.println("Starting a Nim competition of " + numGames + 
 				           " rounds between a " + player1.getTypeName() +
-				           " player and a " + player2.getTypeName() + " player.");
-		myCompetition.playMultipleRounds(numGames);
-		
-		
-		
-		
-	}	
-	
+				           " player and a " + player2.getTypeName() +
+				           " player.");
+		myCompetition.playMultipleRounds(numGames);	
+	}		
 }

@@ -118,8 +118,8 @@ public class Player {
 	}
 	
 	/*
-	 * Checks whether a row has unmarked sticks. If so, returns the index of
-	 * the first one. otherwise, returns 0.
+	 * Returns true if a row has unmarked sticks, false otherwise.
+	 * Helps other methods (RandomMove, SmartMove).
 	 */
 	private boolean isRowHasUnmarked(Board board, int aRow) {
 		int rowLength = board.getRowLength(aRow);
@@ -136,26 +136,156 @@ public class Player {
 	 */
 	private Move produceRandomMove(Board board){
 		Random myRandom = new Random();
-		int maxRow = board.getNumberOfRows();
-		int randRow = 0;
+		int maxRow = board.getNumberOfRows(), randRow = 0;
 		boolean hasUnmarked = false;
+		// Chooses a random row with sticks in it
 		while (!hasUnmarked){
 			randRow = myRandom.nextInt(maxRow) + 1;
 			hasUnmarked = isRowHasUnmarked(board,randRow);
 		}
-
+		
+		// Produce random left and right boundaries
 		int rowLength = board.getRowLength(randRow);
 		int randLeft = myRandom.nextInt(rowLength) + 1;
 		int randSequence = myRandom.nextInt(rowLength - randLeft + 1) + 1;
 		return new Move(randRow, randLeft, randLeft + randSequence - 1);
 	}
 	
+	// Methods to help the SmartMove method.
+	
+	/*
+	 * Returns the total number of separate sequences of sticks in a given board.
+	 */
+	public int getNumberOfSequences(Board board) {
+		int sequenceNum = 0;
+		boolean counting;
+		for (int row = 1; row <= board.getNumberOfRows(); row ++) {
+			counting = false;
+			for (int stick = 1; stick <= board.getRowLength(row); stick ++) {
+				// Counts unmarked sticks.
+				if (board.isStickUnmarked(row, stick)) {
+					if (!counting) {
+						sequenceNum ++;
+						counting = true;
+					}
+				} else {
+					counting = false;
+				}
+			}
+		}
+		return sequenceNum;
+	}
+	
+	/*
+	 * Returns a new Board object identical to the given one.
+	 */
+	private Board copyBoard(Board board) {
+		Board newBoard = new Board();
+		Move myMove;
+		for (int row = 1; row <= board.getNumberOfRows(); row ++) {
+			for (int stick = 1; stick <= board.getRowLength(row); stick ++) {
+				// Mark in the new board every marked stick in the old board.
+				if (!board.isStickUnmarked(row, stick)) {
+					myMove = new Move(row, stick, stick);
+					newBoard.markStickSequence(myMove);
+				}
+			}
+		}
+		return newBoard;
+	}
+	
+	/*
+	 * Returns true if the current setting of the board is a sure lost,
+	 * false otherwise.
+	 * Helps determine whether a 'test' move is a winning one.
+	 */
+	private boolean isLosingState(Board board) {
+		int numOfSticks = board.getNumberOfUnmarkedSticks();
+		int numOfSequences = getNumberOfSequences(board);
+		return (numOfSticks == numOfSequences && numOfSticks % 2 == 1);
+	}
+	
+	/*
+	 * Returns the total number of possible moves on the board.
+	 */
+	private int possibleMoves(Board board) {
+		int numOfMoves = 0;
+		int maxRow = board.getNumberOfRows();
+		boolean counting;
+		int sequenceSize, rowLength;
+		
+		for (int row = 1; row <= maxRow; row ++) {
+			if (!isRowHasUnmarked(board, row)){
+				continue; // Skip empty rows.
+			}
+			rowLength = board.getRowLength(row);
+			counting = false;
+			sequenceSize = 0;
+			for (int stick = 1; stick <= rowLength; stick ++) {
+				if (board.isStickUnmarked(row, stick)) {
+					if (!counting) {
+						counting = true;
+					}
+					sequenceSize ++;
+				} else {
+					if (counting) {
+						numOfMoves += sequenceSize*(sequenceSize + 1) / 2;
+					}
+					sequenceSize = 0;
+					counting = false;
+				}
+			}
+			if (counting) {
+				numOfMoves += sequenceSize*(sequenceSize + 1) / 2;
+			}
+		}
+		return numOfMoves;
+	}
+	
 	/*
 	 * Produce some intelligent strategy to produce a move
 	 */
-	private Move produceSmartMove(Board board){
-		Move myMove = null;
-		return myMove;
+	private Move produceSmartMove(Board board) {
+		// Higher number will get better results, but worse performance.
+		int MAX_MOVES_ALLOWED = 15;
+		// a new board for test moves.
+		Board testBoard;
+		// total number of sticks and sequences on board
+		int numOfSticks = board.getNumberOfUnmarkedSticks();
+		int numOfSequences = getNumberOfSequences(board);
+		int maxRow = board.getNumberOfRows(), rowLength;
+		Move myMove;
+		
+		if (numOfSticks == numOfSequences){
+			// In this case, it doesn't matter what move you play.
+			return produceRandomMove(board);
+		} else {
+			/* Checks every possible move (within the limits) to see 
+			   if there's a winning move. If one was found, return it. */
+			if (possibleMoves(board) < MAX_MOVES_ALLOWED) {
+				for (int row = 1; row <= maxRow; row ++) {
+					if (!isRowHasUnmarked(board, row)) {
+						continue;
+					}
+					rowLength = board.getRowLength(row);
+					for (int left = 1; left <= rowLength; left ++) {
+						if (!board.isStickUnmarked(row, left)) {
+							continue;
+						}
+						for (int seq = 0; seq <= rowLength - left; seq ++) {
+							myMove = new Move(row, left, left + seq);
+							testBoard = copyBoard(board);
+							testBoard.markStickSequence(myMove);
+							if (isLosingState(testBoard)) {
+								return myMove;
+							}
+						}
+					}
+				}
+			}
+		}
+		// If no move was a winning one, produce a random move.
+		return produceRandomMove(board);
 	}
 	
 	/*
@@ -163,16 +293,19 @@ public class Player {
 	 */
 	private Move produceHumanMove(Board board){
 		int myRow,myLeft,myRight;
+		Move myMove = null;
 		int input;
-		while(true) {
+		boolean shouldStop = false;
+		while(!shouldStop) {
 			System.out.print("Press 1 to display the board.  ");
 			System.out.println("Press 2 to make a move:");
+			// Get input from user
 			input = scanner.nextInt();
 			switch (input){
-				case 1:
+				case 1: // Print board
 					System.out.println(board);
 					break;
-				case 2:
+				case 2: // Ask for a move
 					System.out.println("Enter the row number:");
 					myRow = scanner.nextInt();
 					System.out.println("Enter the index of the " +
@@ -181,11 +314,14 @@ public class Player {
 					System.out.println("Enter the index of the " +
 							                    "rightmost stick:");
 					myRight = scanner.nextInt();
-					return new Move(myRow,myLeft,myRight);
+					myMove = new Move(myRow,myLeft,myRight);
+					shouldStop = true;
+					break;
 				default:
 					System.out.println("Unknown input.");
 			}
 		}
+		return myMove;
 	}
 	
 	/*
