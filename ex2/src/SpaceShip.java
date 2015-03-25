@@ -1,4 +1,5 @@
 import java.awt.Image;
+
 import oop.ex2.*;
 
 /**
@@ -9,8 +10,18 @@ import oop.ex2.*;
  * @author ransha
  */
 public class SpaceShip{
-
-   
+	private oop.ex2.SpaceShipPhysics myPhysics;
+	private int health,energy,maxEnergy;
+	int shipType;
+	
+	public SpaceShip(int thisShipType) {
+		 health = 20;
+		 maxEnergy = 200;
+		 energy = maxEnergy;
+		 myPhysics = new SpaceShipPhysics();
+		 shipType = thisShipType;
+	}
+	
     /**
      * Does the actions of this ship for this round. 
      * This is called once per round by the SpaceWars game driver.
@@ -18,7 +29,7 @@ public class SpaceShip{
      * @param game the game object to which this ship belongs.
      */
     public void doAction(SpaceWars game) {
-
+    	
     }
 
     /**
@@ -51,7 +62,7 @@ public class SpaceShip{
      * @return the physics object that controls the ship.
      */
     public SpaceShipPhysics getPhysics() {
-        return null;
+    	return myPhysics;
     }
 
     /**
