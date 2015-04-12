@@ -25,9 +25,9 @@ public class RunnerShip extends SpaceShip {
 		closestShip = game.getClosestShipTo(this).getPhysics();
 		double angle = myPhysics.angleTo(closestShip);
 		int turn = 0;
-		if (angle > 0) {
+		if (angle >= 0) {
 			turn = -1;
-		} else if (angle < 0) {
+		} else {
 			turn = 1;
 		}
 		myPhysics.move(true, turn);
