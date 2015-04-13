@@ -14,7 +14,7 @@ public abstract class SpaceShip{
 					     	   COLLISION_DAMAGE = 1, SHOT_DAMAGE = 1,
 					     	   BASHING_BONUS = 20, HIT_ENERGY_PENALTY = 10;
 	protected static int TELEPORT_COST = 150, SHOT_COST = 20, SHIELD_COST = 3, FIRE_REFRACTORY = 8;
-	
+	protected static final int LEFT = 1, RIGHT = -1;
 	// Ship's data members
 	protected int maxEnergy,currentEnergy,health;
 	protected SpaceShipPhysics myPhysics;
@@ -49,6 +49,7 @@ public abstract class SpaceShip{
 	
 	/**
 	 * Decides how to move this round.
+	 * Should call myPhysics.move(); method exactly ONCE.
 	 * @param game
 	 */
 	protected abstract void doMove(SpaceWars game);
@@ -149,7 +150,7 @@ public abstract class SpaceShip{
      * Gets the image of this ship. This method should return the image of the
      * ship with or without the shield. This will be displayed on the GUI at
      * the end of the round.
-     * NOTE : Default is ENEMY SHIP.
+     * NOTE : Default is ENEMY SHIP. If an ally ship is created, override this method.
      * 
      * @return the image of this ship.
      */
@@ -174,6 +175,13 @@ public abstract class SpaceShip{
        }
     }
 
+    /**
+     * Turns off shields.
+     */
+    protected void shieldOff() {
+    	shieldsAreOn = false;
+    }
+    
     /**
      * Attempts to turn on the shield.
      */

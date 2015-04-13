@@ -24,9 +24,10 @@ public class HumanShip extends SpaceShip {
 		boolean accel = game.getGUI().isUpPressed();
 		int turn = 0;
 		if (game.getGUI().isLeftPressed()) {
-			turn = 1;
-		} else if (game.getGUI().isRightPressed()) {
-			turn = -1;
+			turn += LEFT;
+		} 
+		if (game.getGUI().isRightPressed()) {
+			turn += RIGHT;
 		}
 		
 		myPhysics.move(accel, turn);
@@ -36,7 +37,7 @@ public class HumanShip extends SpaceShip {
 	protected void doShields(SpaceWars game) {
 		if (game.getGUI().isShieldsPressed()) {
 			if (shieldsAreOn) {
-				shieldsAreOn = false;
+				shieldOff();
 			} else {
 				shieldOn();
 			}

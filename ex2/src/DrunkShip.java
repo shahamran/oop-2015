@@ -12,16 +12,16 @@ public class DrunkShip extends SpaceShip {
 	// Random Generator
 	private static Random randomGenerator = new Random();
 	// Some Constants
-	private static final int MAX_FEELINGS = 200, ACTUALLY_FEELS = 140;
-	private static final double CLOSE_ENOUGH_ANGLE = 1;
+	private static final int MAX_FEELINGS = 200, ACTUALLY_FEELS = 150;
+	private static final double CLOSE_ENOUGH_ANGLE = 1.2;
 	// Data members
 	private SpaceShipPhysics closestShip;
 	private boolean isAngry = false, isDizzy = false, isParanoid = false;
 	
-	/* the feelingAmount is the intensity of a feeling, if greater that ACTUALLY_FEELS, the boolean
+	/* the feelingAmount is the intensity of a feeling, if greater than ACTUALLY_FEELS, the boolean
 	   of this feeling will be set to true */
 	private int dizzyAmount = 0, angryAmount = 0, paranoidAmount = 0;
-	// the currentFeeling is simply a counter to maintain a feeling during several rounds.
+	// the currentFeeling is simply a counter to maintain feelings during several rounds.
 	private int currentDizzy = 0, currentAngry = 0, currentParanoid = 0;
 	
 	/**
@@ -86,8 +86,8 @@ public class DrunkShip extends SpaceShip {
 						
 		double angle = myPhysics.angleTo(closestShip);
 		int turn = 0;
-		turn = (angle >= 0) ? -1 : 1; // turn towards enemy ships
-		turn = isParanoid ? (-1) * turn : turn; // -- or -- run away if paranoid
+		turn = (angle >= 0) ? LEFT : RIGHT; // turn towards enemy ships fiercefully
+		turn = isParanoid ? (-1) * turn : turn; // -- or... -- run for your life if paranoid
 		
 		boolean accel = isDizzy ? false : true; // don't accelerate if dizzy (to avoid throwing up)
 		
@@ -118,7 +118,7 @@ public class DrunkShip extends SpaceShip {
 		if (isParanoid && !isDizzy) {
 			shieldOn();
 		} else {
-			shieldsAreOn = false;
+			shieldOff();
 		}
 	}
 

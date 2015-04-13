@@ -1,14 +1,14 @@
 import oop.ex2.*;
 
 /**
- * 
+ * A class that reprsents a SpaceShip that tries to destroy other spaceships by shooting at them. 
  * @author ransha
- *
  */
 public class AggressiveShip extends SpaceShip {
 	// Holds the closest ship's physics.
 	private SpaceShipPhysics closestShip;
-	private final double CLOSE_ANGLE = 0.2;
+	// Constant
+	private final static double CLOSE_ANGLE = 0.2;
 	
 	
 	@Override
@@ -17,9 +17,9 @@ public class AggressiveShip extends SpaceShip {
 		double angle = myPhysics.angleTo(closestShip);
 		int turn = 0;
 		if (angle > 0) {
-			turn = 1;
+			turn = LEFT;
 		} else if (angle < 0) {
-			turn = -1;
+			turn = RIGHT;
 		}
 		myPhysics.move(true, turn);
 	}
