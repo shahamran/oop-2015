@@ -1,7 +1,7 @@
 import java.awt.Image;
 import oop.ex2.*;
 
-public class HumanShip extends SpaceShip {
+public class HumanShip extends SpaceShip implements Teleportable, HasShield, HasGuns {
 	
 	@Override
 	public Image getImage() {
@@ -13,14 +13,14 @@ public class HumanShip extends SpaceShip {
 	}
 
 	@Override
-	protected void doTeleport(SpaceWars game) {
+	public void doTeleport(SpaceWars game) {
 		if (game.getGUI().isTeleportPressed()) {
 			teleport();
 		}
 	}
 
 	@Override
-	protected void doMove(SpaceWars game) {
+	public void doMove(SpaceWars game) {
 		boolean accel = game.getGUI().isUpPressed();
 		int turn = 0;
 		if (game.getGUI().isLeftPressed()) {
@@ -34,7 +34,7 @@ public class HumanShip extends SpaceShip {
 	}
 
 	@Override
-	protected void doShields(SpaceWars game) {
+	public void doShields(SpaceWars game) {
 		if (game.getGUI().isShieldsPressed()) {
 			if (shieldsAreOn) {
 				shieldOff();
@@ -45,7 +45,7 @@ public class HumanShip extends SpaceShip {
 	}
 
 	@Override
-	protected void doFire(SpaceWars game) {
+	public void doFire(SpaceWars game) {
 		if (game.getGUI().isShotPressed()) {
 			fire(game);
 		}

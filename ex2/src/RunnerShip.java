@@ -42,13 +42,13 @@ public class RunnerShip extends SpaceShip {
 
 	@Override
 	protected void doShields(SpaceWars game) {
-		/* Doesn't turn on shields */
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	protected void doFire(SpaceWars game) {
-		/* Doesn't fire */
+		// TODO Auto-generated method stub
+		
 	}
-
-
 }

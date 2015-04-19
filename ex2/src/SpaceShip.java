@@ -8,7 +8,7 @@ import oop.ex2.*;
  *  
  * @author oop
  */
-public abstract class SpaceShip{
+public abstract class SpaceShip {
 	// Constants
 	protected static final int START_ENERGY = 200, START_HEALTH = 20,
 					     	   COLLISION_DAMAGE = 1, SHOT_DAMAGE = 1,
@@ -77,6 +77,7 @@ public abstract class SpaceShip{
     	doMove(game);
     	doShields(game);
     	
+    	// Update fire delay
     	if (fireWait > 0) {
     		fireWait --;
     	}

@@ -1,7 +1,7 @@
 import oop.ex2.*;
 
 /**
- * A class that reprsents a SpaceShip that tries to destroy other spaceships by shooting at them. 
+ * A class that represents a SpaceShip that tries to destroy other spaceships by shooting at them. 
  * @author ransha
  */
 public class AggressiveShip extends SpaceShip {
@@ -31,15 +31,16 @@ public class AggressiveShip extends SpaceShip {
 			fire(game);
 		}
 	}
-	
+
 	@Override
 	protected void doTeleport(SpaceWars game) {
-		/* Doesn't try to teleport */
-	}
-	
-	@Override
-	protected void doShields(SpaceWars game) {
-		/* Doesn't turn on shields */
+		// TODO Auto-generated method stub
+		
 	}
 
+	@Override
+	protected void doShields(SpaceWars game) {
+		// TODO Auto-generated method stub
+		
+	}
 }

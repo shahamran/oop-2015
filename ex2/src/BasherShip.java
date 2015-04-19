@@ -44,12 +44,13 @@ public class BasherShip extends SpaceShip {
 
 	@Override
 	protected void doTeleport(SpaceWars game) {
-		/* Doesn't teleport */
-	}
-	
-	@Override
-	protected void doFire(SpaceWars game) {
-		/* Doesn't fire */
+		// TODO Auto-generated method stub
+		
 	}
 
+	@Override
+	protected void doFire(SpaceWars game) {
+		// TODO Auto-generated method stub
+		
+	}
 }

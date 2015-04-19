@@ -1,0 +1,42 @@
+ransha
+
+
+===================
+=  README for ex1 =
+===================
+
+==================
+=  Description:  =
+==================
+
+A full implementation of a Nim game.
+
+=============================
+=  List of submitted files: =
+=============================
+
+README - This file.
+Move.java - A move object in the Nim game.
+Competition.java - The class that runs the game.
+Player.java - A player object that can produce a various types of moves
+Board.java - Untouched.
+
+
+=========
+= NOTE  =
+=========
+__Smart_move_implementation__
+I tried different tactics before using the current one.
+In order to produce a winning move I counted the total number of sequences
+on the board, and the total number of unmarked sticks. I figured that if
+the numbers are the same, the winner is determined by the PARITY of this
+number (if sequences % 2 == 1, current player loses).
+I tested (almost) every possible move each turn to check if a winning move
+can be produced. otherwise, a random move was made.
+
+I was trying a better recursive method to rate each move and then pick the
+best rated move, but it was too slow when running more than ~ 100 rounds,
+so I downgraded it to the current implementation.
+
+The current implementation wins about 85% of the games against a random
+player, and wins about 15% of the games against a Heuristic player. 
