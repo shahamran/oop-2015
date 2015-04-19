@@ -50,6 +50,9 @@ public class DrunkShip extends SpaceShip {
 		int turn = 0;
 		turn = (angle >= 0) ? LEFT : RIGHT; // turn towards enemy ships fiercefully
 		turn = paranoid.isFeeling() ? (-1) * turn : turn; // -- or... -- run for your life if paranoid
+		if (!paranoid.isFeeling() && angle == 0) {
+			turn = 0;
+		}
 		
 		boolean accel = dizzy.isFeeling() ? false : true; // don't accelerate if dizzy (to avoid throwing up)
 		
@@ -58,14 +61,14 @@ public class DrunkShip extends SpaceShip {
 	
 	@Override
 	/**
-	 * Attempts to teleport, only 1 out of 5 times and only if the pilot's feeling paranoid.
+	 * Attempts to teleport, only 1 out of 4 times and only if the pilot's feeling paranoid.
 	 */
 	protected void doTeleport(SpaceWars game) {
 		if (!paranoid.isFeeling()) {
 			return;
 		}
-		int shouldTeleport = randomGenerator.nextInt(5);
-		if (shouldTeleport == 4) {
+		int shouldTeleport = randomGenerator.nextInt(4);
+		if (shouldTeleport == 0) {
 			teleport();
 		}
 	}

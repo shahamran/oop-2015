@@ -12,6 +12,9 @@ public class Feeling {
 		doesFeel = false;
 	}
 	
+	/**
+	 * Randomly change the feeling.
+	 */
 	public void updateFeeling() {
 		if (feelingAmount == 0) {
 			feelingCounter = 0;
@@ -26,6 +29,10 @@ public class Feeling {
 		doesFeel = feelingAmount >= ACTUALLY_FEELS;
 	}
 	
+	/**
+	 * 
+	 * @return True if this feeling is currently being felt, false otherwise.
+	 */
 	public boolean isFeeling() {
 		return doesFeel;
 	}

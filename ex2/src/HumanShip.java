@@ -1,11 +1,11 @@
 import java.awt.Image;
 import oop.ex2.*;
 
-public class HumanShip extends SpaceShip implements Teleportable, HasShield, HasGuns {
+public class HumanShip extends SpaceShip {
 	
 	@Override
 	public Image getImage() {
-		if (shieldsAreOn) {
+		if (shields.getAction()) {
 			return GameGUI.SPACESHIP_IMAGE_SHIELD;
 		} else {
 			return GameGUI.SPACESHIP_IMAGE;
@@ -36,7 +36,7 @@ public class HumanShip extends SpaceShip implements Teleportable, HasShield, Has
 	@Override
 	public void doShields(SpaceWars game) {
 		if (game.getGUI().isShieldsPressed()) {
-			if (shieldsAreOn) {
+			if (shields.getAction()) {
 				shieldOff();
 			} else {
 				shieldOn();

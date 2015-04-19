@@ -1,28 +1,39 @@
 
 public class Action {
 	private boolean doAction;
-	private final int actionInitial;
 	private int actionDamage, actionPenalty, actionRefractory, actionCost, actionBonus;
 	private int actionCounter;
 	
-	public Action(int cost, int initial, int damage){
+	/**
+	 * 
+	 * @param cost
+	 * @param initial
+	 * @param damage
+	 * @param penalty
+	 * @param refractory
+	 * @param bonus
+	 */
+	public Action(int cost, int damage, int penalty) {
+		actionCounter = 0;
 		actionCost = cost;
-		actionInitial = initial;
-		actionPenalty = 0;
+		actionDamage = damage;
+		actionPenalty = penalty;
 		actionRefractory = 0;
+		actionBonus = 0;
 		doAction = false;
 	}
 	
-	public Action(int cost, int initial, int damage, int penalty, int refractory, int bonus) {
-		actionCounter = 0;
-		actionCost = cost;
-		actionInitial = initial;
-		actionDamage = damage;
-		actionPenalty = penalty;
+	public Action(int cost, int damage, int penalty, int refractory) {
+		this(cost,damage,penalty);
+		actionCounter = refractory;
 		actionRefractory = refractory;
-		actionBonus = bonus;
-		doAction = false;
 	}
+	
+	public Action(int cost, int damage, int penalty,int refractory, int bonus) {
+		this(cost, damage, penalty, refractory);
+		actionBonus = bonus;
+	}
+	
 	
 	public void setAction(boolean yourSet) {
 		doAction = yourSet;
@@ -30,10 +41,6 @@ public class Action {
 	
 	public boolean getAction() {
 		return doAction;
-	}
-	
-	public int getInitial() {
-		return actionInitial;
 	}
 	
 	public int getCost() {
@@ -52,15 +59,23 @@ public class Action {
 		return actionRefractory;
 	}
 	
+	public int getBonus() {
+		return actionBonus;
+	}
+	
 	public void updateRefractory() {
-		if (actionCounter < actionRefractory) {
-			actionCounter ++;
+		if (!doAction) {
+			return;
+		}
+		if (actionCounter > 0) {
+			actionCounter --;
 		} else {
-			actionCounter = 0; actionRefractory = 0;
+			actionCounter = actionRefractory;
+			doAction = false;
 		}
 	}
 	
-	public boolean canDoAction() {
-		return actionCounter >= actionRefractory;
+	public boolean canDoAction(int yourEnergy) {
+		return yourEnergy >= actionCost && actionCounter == actionRefractory;
 	}
 }

@@ -10,16 +10,12 @@ import oop.ex2.*;
  */
 public abstract class SpaceShip {
 	// Constants
-	protected static final int START_ENERGY = 200, START_HEALTH = 20,
-					     	   COLLISION_DAMAGE = 1, SHOT_DAMAGE = 1,
-					     	   BASHING_BONUS = 20, HIT_ENERGY_PENALTY = 10;
-	protected static int TELEPORT_COST = 150, SHOT_COST = 20, SHIELD_COST = 3, FIRE_REFRACTORY = 8;
+	protected static final int START_ENERGY = 200, START_HEALTH = 20;
 	protected static final int LEFT = 1, RIGHT = -1;
 	// Ship's data members
 	protected int maxEnergy,currentEnergy,health;
+	protected Action fire,shields,teleport,bashing,collision;
 	protected SpaceShipPhysics myPhysics;
-	protected boolean shieldsAreOn;
-	private int fireWait; // Counts the fire waiting time (rounds).
 	
 	/** 
      * This method is called whenever a ship has died. It resets the ship's 
@@ -29,9 +25,16 @@ public abstract class SpaceShip {
     	maxEnergy = START_ENERGY;
     	currentEnergy = START_ENERGY;
     	health = START_HEALTH;
-    	shieldsAreOn = false;
-    	fireWait = 0;
     	myPhysics = new SpaceShipPhysics();
+    	initActions();
+    }
+    
+    private void initActions() {
+    	fire = new Action(20, 1, 10, 8);
+    	shields = new Action(3, 0, 0);
+    	teleport = new Action(150, 0, 0);
+    	collision = new Action(0, 1, 10);
+    	bashing = new Action(0, 0, 0, 0, 20);
     }
     
 	/**
@@ -76,11 +79,7 @@ public abstract class SpaceShip {
     	doTeleport(game);
     	doMove(game);
     	doShields(game);
-    	
-    	// Update fire delay
-    	if (fireWait > 0) {
-    		fireWait --;
-    	}
+    	fire.updateRefractory();
     	doFire(game);
     	
     	// Regenerate
@@ -100,22 +99,19 @@ public abstract class SpaceShip {
     		amount = maxEnergy;
     	}
     	maxEnergy -= amount;
-    	if (currentEnergy > maxEnergy) {
-    		currentEnergy = maxEnergy;
-    	}
+    	currentEnergy = Math.min(currentEnergy, maxEnergy);
     }
     
     /**
      * This method is called every time a collision with this ship occurs 
      */
     public void collidedWithAnotherShip() {
-    	if (!shieldsAreOn) {
-    		health -= COLLISION_DAMAGE;
-    		reduceMaxEnergy(HIT_ENERGY_PENALTY);
-    	} else {
-    		currentEnergy += BASHING_BONUS;
-    		maxEnergy += BASHING_BONUS;
-    	}
+    	Action myAction = shields.getAction() ? bashing : collision;
+    	
+    	health -= myAction.getDamage();
+    	reduceMaxEnergy(myAction.getPenalty());
+    	currentEnergy += myAction.getBonus();
+    	maxEnergy += myAction.getBonus();
     }
 
     /**
@@ -141,10 +137,11 @@ public abstract class SpaceShip {
      * gets hit by a shot.
      */
     public void gotHit() {
-    	if (!shieldsAreOn) {
-    		health -= SHOT_DAMAGE;
-    		reduceMaxEnergy(HIT_ENERGY_PENALTY);
+    	if (!shields.getAction()) {
+    		health -= fire.getDamage();
+    		reduceMaxEnergy(fire.getPenalty());
     	}
+    	
     }
 
     /**
@@ -156,7 +153,7 @@ public abstract class SpaceShip {
      * @return the image of this ship.
      */
     public Image getImage() {
-    	if (shieldsAreOn) {
+    	if (shields.getAction()) {
 			return GameGUI.ENEMY_SPACESHIP_IMAGE_SHIELD;
 		} else {
 			return GameGUI.ENEMY_SPACESHIP_IMAGE;
@@ -168,41 +165,41 @@ public abstract class SpaceShip {
      * 
      * @param game the game object.
      */
-    public void fire(SpaceWars game) {
-       if (currentEnergy >= SHOT_COST && fireWait == 0) {
-    	   game.addShot(myPhysics);
-    	   currentEnergy -= SHOT_COST;
-    	   fireWait = FIRE_REFRACTORY;
-       }
+    public void fire(SpaceWars game) {    	
+    	if (fire.canDoAction(currentEnergy)) {
+    		game.addShot(myPhysics);
+    		currentEnergy -= fire.getCost();
+    		fire.setAction(true);
+    	}
     }
 
     /**
      * Turns off shields.
      */
     protected void shieldOff() {
-    	shieldsAreOn = false;
+    	shields.setAction(false);
     }
     
     /**
      * Attempts to turn on the shield.
      */
     public void shieldOn() {
-        if (currentEnergy >= SHIELD_COST) {
-        	shieldsAreOn = true;
-        	currentEnergy -= SHIELD_COST;
-        } else {
-        	shieldsAreOn = false;
-        }
+    	if (shields.canDoAction(currentEnergy)) {
+    		shields.setAction(true);
+    		currentEnergy -= shields.getCost();
+    	} else {
+    		shields.setAction(false);
+    	}
     }
 
     /**
      * Attempts to teleport.
      */
     public void teleport() {
-       if (currentEnergy >= TELEPORT_COST) {
-    	   myPhysics = new SpaceShipPhysics();
-    	   currentEnergy -= TELEPORT_COST;
-       }
+    	if (teleport.canDoAction(currentEnergy)) {
+    		myPhysics = new SpaceShipPhysics();
+    		currentEnergy -= teleport.getCost();
+    	}
     }
     
 }
