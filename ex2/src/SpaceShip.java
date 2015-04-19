@@ -184,11 +184,9 @@ public abstract class SpaceShip {
      * Attempts to turn on the shield.
      */
     public void shieldOn() {
-    	if (shields.canDoAction(currentEnergy)) {
-    		shields.setAction(true);
+    	shields.setAction(shields.canDoAction(currentEnergy));
+    	if (shields.getAction()) {
     		currentEnergy -= shields.getCost();
-    	} else {
-    		shields.setAction(false);
     	}
     }
 

@@ -29,9 +29,25 @@ public class SpecialShip extends SpaceShip {
 
 	@Override
 	protected void doFire(SpaceWars game) {
-		fire(game);
+		
 	}
-
+	
+	public void fire(SpaceWars game) {
+		if (fire.canDoAction(currentEnergy)) {
+			myPhysics.move(false, 1);
+			myPhysics.move(false, 1);
+			game.addShot(myPhysics);
+			myPhysics.move(false, -1);
+			myPhysics.move(false, -1);
+			game.addShot(myPhysics);
+			myPhysics.move(false, -1);
+			myPhysics.move(false, -1);
+			game.addShot(myPhysics);
+			myPhysics.move(false, 1);
+			myPhysics.move(false, 1);
+			currentEnergy -= fire.getCost();
+		}
+	}
 	
 
 

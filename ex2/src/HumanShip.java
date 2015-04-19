@@ -36,11 +36,9 @@ public class HumanShip extends SpaceShip {
 	@Override
 	public void doShields(SpaceWars game) {
 		if (game.getGUI().isShieldsPressed()) {
-			if (shields.getAction()) {
-				shieldOff();
-			} else {
-				shieldOn();
-			}
+			shieldOn();
+		} else {
+			shieldOff();
 		}
 	}
 

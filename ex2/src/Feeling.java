@@ -1,7 +1,7 @@
 import java.util.Random;
 
 public class Feeling {
-	private static final int MAX_FEELING = 100, ACTUALLY_FEELS = 150;
+	private static int MAX_FEELING = 200, ACTUALLY_FEELS = 160;
 	private int feelingAmount, feelingCounter;
 	private boolean doesFeel;
 	private Random randomGenerator;
