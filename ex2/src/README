@@ -94,6 +94,6 @@ __Special Implementation__
 I decided to create a ship that resemble some attributes of the mythological character - 'Medusa'.
 Other spaceships can't 'look' at Medusa directly - when they try to do so, they are being teleported.
 Medusa moves twice as fast as a regular ship, and it chases enemy ships and fires at them.
-When close to an enemy ship, medusa turns on its shields to bash it, and the enemy ship is feeling 'weak'
+When close to an enemy ship, Medusa turns on its shields to bash it, and the enemy ship is feeling 'weak'
 (no connection to the Feeling object) and its shields are turned off.
 This ship is quite hard to defeat.
