@@ -6,11 +6,8 @@ import oop.ex2.*;
  * @author ransha
  *
  */
-public class BasherShip extends SpaceShip {
+public class BasherShip extends SpaceShip implements HasShields {
 	private SpaceShipPhysics closestShip;
-	// Constants
-	private final static double CLOSE_DISTANCE = 0.2;
-	private final boolean ACCELERATES = true;
 	
 	@Override
 	/**
@@ -18,39 +15,21 @@ public class BasherShip extends SpaceShip {
 	 */
 	protected void doMove(SpaceWars game) {
 		closestShip = game.getClosestShipTo(this).getPhysics();
-		double angle = myPhysics.angleTo(closestShip);
-		int turn = 0;
-		if (angle > 0) {
-			turn = LEFT;
-		} else if (angle < 0) {
-			turn = RIGHT;
-		}
+		int turn = directionToShip(closestShip, true);
 		// Always accelerates
-		myPhysics.move(ACCELERATES, turn);
+		myPhysics.move(ACCELERATE, turn);
 	}
 
 	@Override
 	/**
-	 * 
+	 * If close enough to enemy ship, (tries to) turn on shields.
 	 */
-	protected void doShields(SpaceWars game) {
+	public void doShields(SpaceWars game) {
 		double distance = myPhysics.distanceFrom(closestShip);
 		if (distance < CLOSE_DISTANCE) {
 			shieldOn();
 		} else {
 			shieldOff();
 		}
-	}
-
-	@Override
-	protected void doTeleport(SpaceWars game) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void doFire(SpaceWars game) {
-		// TODO Auto-generated method stub
-		
 	}
 }

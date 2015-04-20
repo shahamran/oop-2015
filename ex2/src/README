@@ -1,0 +1,99 @@
+ransha
+
+
+===================
+=  README for ex2 =
+===================
+
+==================
+=  Description:  =
+==================
+
+My implementation of the Space Wars game.
+
+=============================
+=  List of submitted files: =
+=============================
+
+README - This file.
+SpaceShip.java - An abstract class that represents a SpaceShip object - see NOTES.
+SpaceShipFactory.java - A class that returns an array of SpaceShip objects.
+Action.java - A class that represents an action that each spaceship can perform (such as fire, teleport etc)
+Feeling.java - A class that reprsents feelings (used by the DrunkShip class - see NOTES).
+AggressiveShip.java - The aggressive ship implementation as specified in the instructions.
+BasherShip.java - The basher ship implementation as specified in the instructions.
+RunnerShip.java - The runner ship implementation as specified in the instructions.
+DrunkShip.java - A space ship object with a drunk pilot - see NOTES.
+HumanShip.java - A ship that is controlled by the user (using the GUI object).
+SpecialShip.java - A ship that acts like 'Medusa' - see NOTES.
+Teleportable.java - An interface that every SpaceShip object that teleports should implement.
+HasShields.java - An interface that every SpaceShip object that turns on shields should implement.
+HasGuns.java - An interface that every SpaceShip object that fires shots should implement.
+
+==========
+= NOTES  =
+==========
+
+__Realtionships between classes__
+
+Each space ship type 'is-a' SpaceShip object (SomeSpaceShip extends SpaceShip).
+Each action a space ship does should be an interface it implements - except moving :
+SomeSpaceShip extends SpaceShip implements {Teleportable, HasShields...}
+Each SpaceShip object 'has' several Action objects in it (5, to be exact).
+(DrunkShip 'has' Feeling objects in it).  
+
+__About my design__
+
+I decided to implement the SpaceShip class as an abstract class. This is because all SpaceShip objects 
+share a large amount of code, but no instance of a 'general' SpaceShip object should be created.
+
+Also, the doActions() method is implemented in the abstract class to keep the order of the actions a space
+ship does correct. Instead of worrying about the order of actions, the inheriting SpaceShip classes should
+only implement methods that are relevant to them.
+(And to avoid 'cheating' - like extra regeneration of energy every round).
+Thus, inheriting classes MUST implement only one method, and can also implement each of the actions
+by implementing the doTeleport(), doShields(), doFire() methods...
+
+Furthermore, I decided to add interfaces to 'force' inheriting SpaceShip classes to implement essential
+methods (that are relevant for their implementation) - for example, A space ship that implements the 
+'Teleportable' interface must write its own doTeleport() method to decide when to teleport. But if
+it doesn't need to turn on shields ever, it shouldn't implement the HasShield interface and the doShields()
+method remains the standard empty method as implemented in the abstract SpaceShip class.
+
+The doMove() method is an abstract method because every SpaceShip has to decide how to move by its own,
+so it has to override this method.
+
+This design leaves a very small amount of implementation needed to be done by inheriting SpaceShip classes,
+thus an extension to this implementation should be intuitive and easy - extend the SpaceShip class, and
+implement every interface that represent an action you want your new ship to do.
+A user can also easily add different actions to the game just by creating more Action objects and adding
+code to the doActions() method according to desired behavior.
+
+I think this design is modular - The 'largest' class is SpaceShip, and in my opinion every implementation
+in it is essential. It also uses composition (Action objects) and has 'helping' methods to make the creation
+of different space ship types easier.
+
+To conclude, I think this design is understandable - the names are meaningful, the relationships between
+classes are intuitive. Every change in the design shouldn't affect depending classes too much - I know
+that because I made a lot of changes in the design on a very late stage of work, and it didn't result in
+errors in any of the space ship types classes.
+
+__Drunkard Implementation__
+
+The drunkard ship is a ship that behaves solely based on randomly generated 'feelings'.
+A feeling is an object that has a simple API - updateFeeling() to change the feeling randomly
+and isFeeling() that returns true if the feeling is 'felt' or false if not.
+I decided to make a new class for feelings for two reasons: 1) simplicity and readabilty of the drunkard
+ship code; 2) To maintain to possibilty to create more SpaceShips that are 'feeling-based' (extensibilty).
+This class has 3 feelings - angry, dizzy and paranoid.
+It implements every interface I created and its decision-making is quite amusing in my
+opinion :) You can see the reasoning for each behavior in the DrunkShip class comments...
+
+__Special Implementation__
+
+I decided to create a ship that resemble some attributes of the mythological character - 'Medusa'.
+Other spaceships can't 'look' at Medusa directly - when they try to do so, they are being teleported.
+Medusa moves twice as fast as a regular ship, and it chases enemy ships and fires at them.
+When close to an enemy ship, medusa turns on its shields to bash it, and the enemy ship is feeling 'weak'
+(no connection to the Feeling object) and its shields are turned off.
+This ship is quite hard to defeat.

@@ -1,4 +1,8 @@
-
+/**
+ * Creates an array of SpaceShip objects according to the string input args[]
+ * @author ransha
+ *
+ */
 public class SpaceShipFactory {
 	// String constants for the ship types
 	private static final String HUMAN  = "h", RUNNER = "r", AGGRESSIVE  = "a",

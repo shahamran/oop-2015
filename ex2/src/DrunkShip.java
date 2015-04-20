@@ -8,9 +8,9 @@ import oop.ex2.*;
  * @author ransha
  *
  */
-public class DrunkShip extends SpaceShip {
+public class DrunkShip extends SpaceShip implements Teleportable, HasShields, HasGuns {
 	// Random Generator
-	private Random randomGenerator = new Random();
+	private Random randomGenerator;
 	// Some Constants
 	private static final int MAX_SHIELD = 50;
 	private static final double CLOSE_ENOUGH_ANGLE = 1.2;
@@ -26,6 +26,7 @@ public class DrunkShip extends SpaceShip {
 		paranoid = new Feeling();
 		Feeling[] myFeelingsList = {dizzy, angry, paranoid}; 
 		feelingsList = myFeelingsList;
+		randomGenerator = new Random();
 	}
 		
 	/**
@@ -44,18 +45,12 @@ public class DrunkShip extends SpaceShip {
 	protected void doMove(SpaceWars game) {
 		updateFeelings();
 		
-		closestShip = game.getClosestShipTo(this).getPhysics();
-						
-		double angle = myPhysics.angleTo(closestShip);
-		int turn = 0;
-		turn = (angle >= 0) ? LEFT : RIGHT; // turn towards enemy ships fiercefully
-		turn = paranoid.isFeeling() ? (-1) * turn : turn; // -- or... -- run for your life if paranoid
-		if (!paranoid.isFeeling() && angle == 0) {
-			turn = 0;
-		}
-		
-		boolean accel = dizzy.isFeeling() ? false : true; // don't accelerate if dizzy (to avoid throwing up)
-		
+		closestShip = game.getClosestShipTo(this).getPhysics();				
+		/* Turn towards enemy ships fiercefully!
+		 * ...or... run for your life if feeling paranoid... */
+		int turn = directionToShip(closestShip, !paranoid.isFeeling());
+		// Avoid accelerating if dizzy, unless of course you're angry... in this case.. DIE ENEMY DIE
+		boolean accel = !dizzy.isFeeling() || angry.isFeeling(); 
 		myPhysics.move(accel, turn);
 	}
 	
@@ -63,7 +58,7 @@ public class DrunkShip extends SpaceShip {
 	/**
 	 * Attempts to teleport, only 1 out of 4 times and only if the pilot's feeling paranoid.
 	 */
-	protected void doTeleport(SpaceWars game) {
+	public void doTeleport(SpaceWars game) {
 		if (!paranoid.isFeeling()) {
 			return;
 		}
@@ -73,13 +68,12 @@ public class DrunkShip extends SpaceShip {
 		}
 	}
 
-
 	@Override
 	/**
 	 * Attempts to turn on the shield if the pilot is feeling paranoid, but not dizzy (so they could
 	 * press the button) 
 	 */
-	protected void doShields(SpaceWars game) {
+	public void doShields(SpaceWars game) {
 		if (shieldCounter < shieldAmount) {
 			shieldOn();
 			shieldCounter ++;
@@ -99,12 +93,10 @@ public class DrunkShip extends SpaceShip {
 	 * Attempts to fire at the closest ship if the pilot is feeling angry but 
 	 * only if they're *kind of* facing it.
 	 */
-	protected void doFire(SpaceWars game) {
+	public void doFire(SpaceWars game) {
 		double angle = myPhysics.angleTo(closestShip);
-		if (angry.isFeeling()) {
-			if (Math.abs(angle) < CLOSE_ENOUGH_ANGLE) {
-				fire(game);
-			}
+		if (angry.isFeeling() && Math.abs(angle) < CLOSE_ENOUGH_ANGLE) {
+			fire(game);	
 		}
 		
 	}

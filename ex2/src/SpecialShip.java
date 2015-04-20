@@ -1,57 +1,64 @@
+/**
+ * This SpaceShip simulates 'medusa' - No other ship can look at it (will be teleported if it tries)
+ * and other ships are weak when next to it (turns close ships' shields off).
+ * Also, it can move twice as fast as a regular space ship.
+ * 
+ * @author ransha
+ *
+ */
+public class SpecialShip extends SpaceShip implements HasGuns, HasShields {
+	private SpaceShip closeShip;
 
-public class SpecialShip extends SpaceShip {
-	private static double CLOSE_ANGLE = 0.2, CLOSE_DISTANCE = 0.5;
-	
 	@Override
-	protected void doTeleport(SpaceWars game) {
-		// Doesn't teleport
+	/**
+	 * Moves twice as fast as a regular space ship.
+	 */
+	protected void doMove(SpaceWars game) {
+		closeShip = game.getClosestShipTo(this);
 		
+		int turn = directionToShip(closeShip.getPhysics(), FOLLOW_SHIP);
+		myPhysics.move(ACCELERATE, turn);
+		myPhysics.move(ACCELERATE, turn);
 	}
 
+	
 	@Override
-	protected void doMove(SpaceWars game) {
-		SpaceShip closeShip = game.getClosestShipTo(this);
-		double angle = closeShip.getPhysics().angleTo(myPhysics);
+	/** 
+	 * Tries to teleport ships that are looking at this ship.
+	 * When a ship is close by, medusa turns off its shields.
+	 * Medusa fires at ships in range.
+	 */
+	public void doFire(SpaceWars game) {
+		closeShip = game.getClosestShipTo(this);
+		
+		double angleToMe = closeShip.getPhysics().angleTo(myPhysics);
 		double distance = myPhysics.distanceFrom(closeShip.getPhysics());
-		if (Math.abs(angle) <= CLOSE_ANGLE) {
+		if (Math.abs(angleToMe) <= CLOSE_ANGLE) {
 			closeShip.teleport();
 		} else if (distance <= CLOSE_DISTANCE) {
 			closeShip.shieldOff();
 		}
-		myPhysics.move(true, 1);
-	}
-
-	@Override
-	protected void doShields(SpaceWars game) {
-		//shieldOn();
+		// Update the closest ship variable (Could have been teleported)
+		closeShip = game.getClosestShipTo(this);
+		double angle = myPhysics.angleTo(closeShip.getPhysics());
 		
-	}
-
-	@Override
-	protected void doFire(SpaceWars game) {
-		
-	}
-	
-	public void fire(SpaceWars game) {
-		if (fire.canDoAction(currentEnergy)) {
-			myPhysics.move(false, 1);
-			myPhysics.move(false, 1);
-			game.addShot(myPhysics);
-			myPhysics.move(false, -1);
-			myPhysics.move(false, -1);
-			game.addShot(myPhysics);
-			myPhysics.move(false, -1);
-			myPhysics.move(false, -1);
-			game.addShot(myPhysics);
-			myPhysics.move(false, 1);
-			myPhysics.move(false, 1);
-			currentEnergy -= fire.getCost();
+		if (Math.abs(angle) <= CLOSE_ANGLE) {
+			this.fire(game);
 		}
 	}
 	
-
-
-
-	
+	/**
+	 * Turn on shields when close to other ships.
+	 */
+	public void doShields(SpaceWars game) {
+		closeShip = game.getClosestShipTo(this);
+		
+		double distance = myPhysics.distanceFrom(closeShip.getPhysics());
+		if (distance <= CLOSE_DISTANCE) {
+			shieldOn();
+		} else {
+			shieldOff();
+		}
+	}
 
 }

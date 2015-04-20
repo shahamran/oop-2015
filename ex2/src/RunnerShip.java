@@ -6,19 +6,18 @@ import oop.ex2.*;
  * @author ransha
  *
  */
-public class RunnerShip extends SpaceShip {
+public class RunnerShip extends SpaceShip implements Teleportable {
 	private SpaceShipPhysics closestShip;
-	// Constants
-	private final static double CLOSE_DISTANCE = 0.2, CLOSE_ANGLE = 0.2;
 	
 	@Override
 	/**
 	 * If threatened, attempts to teleport.
 	 */
-	protected void doTeleport(SpaceWars game) {
+	public void doTeleport(SpaceWars game) {
 		closestShip = game.getClosestShipTo(this).getPhysics();
 		double angleToMe = closestShip.angleTo(myPhysics);
 		double distanceFromMe = myPhysics.distanceFrom(closestShip);
+		
 		if (Math.abs(angleToMe) < CLOSE_ANGLE && distanceFromMe < CLOSE_DISTANCE) {
 			teleport();
 		}
@@ -30,25 +29,7 @@ public class RunnerShip extends SpaceShip {
 	 */
 	protected void doMove(SpaceWars game) {
 		closestShip = game.getClosestShipTo(this).getPhysics();
-		double angle = myPhysics.angleTo(closestShip);
-		int turn = 0;
-		if (angle >= 0) {
-			turn = RIGHT;
-		} else {
-			turn = LEFT;
-		}
-		myPhysics.move(true, turn);
-	}
-
-	@Override
-	protected void doShields(SpaceWars game) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void doFire(SpaceWars game) {
-		// TODO Auto-generated method stub
-		
+		int turn = directionToShip(closestShip, RUN_AWAY);
+		myPhysics.move(ACCELERATE, turn);
 	}
 }
