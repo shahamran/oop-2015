@@ -38,12 +38,12 @@ public class SimpleSetPerformanceAnalyzer {
 
 	
 	public static void initEmptyDastList() {
-		dastList = new SimpleSet[5];
+		dastList = new SimpleSet[4];
 		dastList[0] = new OpenHashSet();
 		dastList[1] = new ChainedHashSet();
 		dastList[2] = new CollectionFacadeSet(new TreeSet<String>());
-		dastList[3] = new CollectionFacadeSet(new LinkedList<String>());
-		dastList[4] = new CollectionFacadeSet(new HashSet<String>());
+		//dastList[3] = new CollectionFacadeSet(new LinkedList<String>());
+		dastList[3] = new CollectionFacadeSet(new HashSet<String>());
 	}
 	
 }

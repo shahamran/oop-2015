@@ -57,16 +57,18 @@ public class OpenHashSet extends SimpleHashSet {
 			return;
 		}
 	
-		String[] newTable = new String[myCapacity];
+		String[] oldTable = hashTable;
 		String value;
+		hashTable = new String[myCapacity];
+		mySize = 0;
 		// Insert all values from the old array to the new one.
-		for (int i=0 ; i < hashTable.length; i++) {
-			value = hashTable[i];
-			if (!(value == EMPTY_SPOT || value == null)) {
-				newTable[i] = value;
-			}
+		for (int i=0 ; i < oldTable.length; i++) {
+			value = oldTable[i];
+			if (value == EMPTY_SPOT || value == null) 
+				continue;
+			
+			add(value);
 		}
-		hashTable = newTable;
 	}
 	
 	/**

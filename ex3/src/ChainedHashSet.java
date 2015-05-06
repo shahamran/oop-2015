@@ -57,7 +57,7 @@ public class ChainedHashSet extends SimpleHashSet {
 		}
 		// Reset the table's size.
 		mySize = 0;
-		Bucket[] oldTable = hashTable.clone(); // COPIES the old array
+		Bucket[] oldTable = hashTable;
 		hashTable = new Bucket[myCapacity];
 		LinkedList<String> bucket;
 		// Insert all values from the old array to the new one.
@@ -80,9 +80,9 @@ public class ChainedHashSet extends SimpleHashSet {
 			return false;
 		
 		int index = hashFunction(newValue);
-		if (hashTable[index] == null) {
+		if (hashTable[index] == null) 
 			hashTable[index] = new Bucket();
-		}
+		
 		if (hashTable[index].contains(newValue))
 			return false;
 		hashTable[index].add(newValue);
