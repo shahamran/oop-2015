@@ -1,0 +1,113 @@
+ransha
+
+
+===================
+=  README for ex3 =
+===================
+
+==================
+=  Description:  =
+==================
+
+My implementation of the hash tables.
+
+=============================
+=  List of submitted files: =
+=============================
+README - this file
+Bucket.java - A class that contains a java.collection LinkedList object and uses it (facade).
+ChainedHashSet.java - A class that represents a hash table in which each cell is a 'bucket' that holds 
+					  strings.
+CollectionFacadeSet.java - This class wraps java.collections and implements the SimpleSet interface so
+						   I could treat these collections as if they were SimpleSets. 
+OpenHashSet.java - A hash set that uses quadratic probing to find the right indices to values.
+SimpleHashSet.java - An abstract class that implements many key methods to other HashSet objects.
+SimpleSetPerformanceAnalyzer.java - A class to test runtimes.
+
+
+
+==========
+= NOTES  =
+==========
+1)	I chose to mark the deleted values in the table with a static string value (called EMPTY_SPOT).
+   	When checking for nulls and deleted spots I used references comparison (str1==EMPTY_SPOT) so the only
+   	way this statement is true is when the references are the same - which means someone intentionally 
+   	initialized this cell with this object (although it's protected, so outsiders technically can't).
+   	The EMPTY_SPOT is initialized with "" string, but you can still add this string to the table because
+   	when contains() method is called it uses .equals() to check for duplicates, and not refernce comparison.
+
+2) 	I implemented my ChainedHashSet table very similarly to the OpenHashSet - except instead of a String[]
+	array, I used a Bucket[]'s array. A bucket is a class I wrote that is virtually a simple facade for
+	java's linked list.
+	
+3) 	Delete method in OpenHashSet: I wrote another private method in that class that finds the index of
+	a certain value, if it exists (if not, it returns a unique index : -1). When the method returns this
+	index, I put EMPTY_SPOT value in it (see (1)). The index finding method knows to keep searching when
+	it sees the EMPTY_SPOT reference.
+
+
+ ============================
+ = Runtime Analysis Results =
+ ============================
+ * Fastest is marked with like this *
+ 
+ ______________adding_words___________
+ 
+ ___DATA_1__________________________DATA_2___________
+ OpenHashSet = 106014 ms		 OpenHashSet = 22 ms
+ ChainedHashSet = 144674 ms		 ChainedHashSet = 36 ms
+ TreeSet = 62 ms				 TreeSet = 57 ms
+ LinkedList = 37128 ms			 LinkedList = 18012 ms
+ * HashSet = 48 ms *			 * HashSet = 13 ms *
+
+ 
+ ______________contains_words____________
+ 
+ ___contains_hi____:
+ _DAST_______________DATA_1_________DATA_2__
+ OpenHashSet		7623 ns      	1751 ns
+ ChainedHashSet	   * 1342 ns *		1762 ns
+ TreeSet	       3330 ns			3184 ns
+ LinkedList	       837746 ns		611467 ns
+  HashSet	       1356 ns			* 1092 ns *
+  
+  _____contains_-13170890158_______:
+ _DAST_____________DATA_1_____
+ OpenHashSet      2876484 ns   
+ ChainedHashSet   799448 ns		
+ TreeSet          3296 ns		
+ LinkedList       773055 ns		
+  HashSet         * 1654 ns *	
+  
+  ___________contains_23____________:
+ _DAST_____________DATA_2_____
+ OpenHashSet      * 912 ns *
+ ChainedHashSet   1227 ns
+ TreeSet          46492 ns
+ LinkedList       1327 ns
+  HashSet         15978 ns
+  
+  
+ ===============
+ = CONCLUSIONS =
+ ===============
+1)	The bad results in data1 insertions is due to the fact that every value in data1 has the same
+	hash code. In the OpenHashSet this thing is bad because the insertion of the n-th element with the 
+	same hash code, needs to do n-1 calculations before it finds the right cell.
+	In ChainedHashSet, the contains() method is very slow (basically for the same reasons) because
+	LinkedLists implement this very slowly.
+2)	Obviously, the Java's HashSet holds benefits in almost every aspect. It is very efficiend in insertion,
+	especially when the data is well distributed.
+3)	In initialization, the OpenHashSet proved to be better both in data1 and in data2. With searching
+	they were pretty close. The OpenHashSet did really bad when tried to search in data1, and surprisingly
+	well in data2. Except from words adding, the ChainedHashSet showed pretty solid performance, compared
+	to the first.
+4)	Hash set beat my data structures in almost every aspect - except searching 23 in data2 and searching
+	hi in data1. I can't explain those results.
+5)	I expected everything that uses LinkedLists (LinkedList and ChainedHashSet) to be as slow as it was,
+	so the search results for hi in data1 really surprised me. I also expected the java's hash set to be
+	really fast, and expected Java's TreeSet to be faster.
+6)	When I first saw Java's HashSet performance on data1 I was really surprised - So surprised I searched
+	for bugs in my tester's implementation. Can't explain it.
+7)	Didn't notice any significant change between absolute value and regular modulu and bitwise. Then again,
+	I still had bugs when I exlpored those 2. 

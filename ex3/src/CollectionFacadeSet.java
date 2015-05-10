@@ -32,5 +32,9 @@ public class CollectionFacadeSet implements SimpleSet {
 	public int size() {
 		return myCollection.size();
 	}
-
+	
+	@Override
+	public String toString() {
+		return myCollection.getClass().toString();
+	}
 }

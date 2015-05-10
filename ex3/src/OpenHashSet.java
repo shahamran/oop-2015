@@ -1,12 +1,18 @@
-
+/**
+ * An implementation of a hash table using quadratic probing to find empty spots in the table.
+ * @author ransha
+ *
+ */
 public class OpenHashSet extends SimpleHashSet {
 	private String[] hashTable;
 	
+	/**
+	 * Sets all paramters to default. Used by constructor('s).
+	 */
 	private void setEmptyTable() {
 		mySize = 0;
 		myCapacity = START_CAPACITY;
 		hashTable = new String[myCapacity];
-		loadFactor = 0;
 	}
 	
 	/**
@@ -45,29 +51,19 @@ public class OpenHashSet extends SimpleHashSet {
 	}
 	
 	/**
-	 * Checks whether the current load factor is between the legal limits.
-	 * If so, does nothing, Otherwise, re-hashes accordingly (builds a new sized array).
+	 * Creates a new hash table and adds all of the old values to it.
 	 */
 	private void reHash() {
-		if (loadFactor >= upperLoad) {
-			increaseCapacity();
-		} else if (loadFactor <= lowerLoad) {
-			decreaseCapacity();
-		} else {
-			return;
-		}
-	
+		mySize = 0;
 		String[] oldTable = hashTable;
 		String value;
 		hashTable = new String[myCapacity];
-		mySize = 0;
 		// Insert all values from the old array to the new one.
-		for (int i=0 ; i < oldTable.length; i++) {
+		for (int i = 0; i < oldTable.length; i++) {
 			value = oldTable[i];
-			if (value == EMPTY_SPOT || value == null) 
-				continue;
-			
-			add(value);
+			if (value != null && value != EMPTY_SPOT) {
+				addUnique(value);
+			}
 		}
 	}
 	
@@ -78,58 +74,72 @@ public class OpenHashSet extends SimpleHashSet {
 	 * @return The string's index in the hash table if found, -1 otherwise.
 	 */
 	private int findIndexOf(String searchVal) {
-		int attempt = 0;
-		int firstIndex = hashFunction(searchVal, attempt);
-		String currentString;
-		int index = -1;
+		int attempt = 0, firstIndex = hashFunction(searchVal), index = firstIndex;
+		String currentString = hashTable[firstIndex];
 		boolean foundValue = false, checkedAll = false;
 		
-		while (!(foundValue || checkedAll)) {
-			index = hashFunction(searchVal,attempt);
+		while (!foundValue && !checkedAll) {
 			currentString = hashTable[index];
-			if (currentString != null && currentString != EMPTY_SPOT) {
-				foundValue = currentString.equals(searchVal);
+			if (currentString == null) {
+				return -1;
+			} else {
+				if (currentString != EMPTY_SPOT) {
+					foundValue = currentString.equals(searchVal);
+					if (foundValue)
+						break;
+				}
 			}
-			checkedAll = index == firstIndex;
 			attempt++;
+			index = hashFunction(searchVal,attempt);
+			checkedAll = index == firstIndex;
 		}
+		// Returns the index if found or -1 if not.
 		return foundValue ? index : -1;
 	}
 	
-	/* (non-Javadoc)
-	 * @see SimpleHashSet#add(java.lang.String)
-	 */
+	
+	private void addUnique(String newVal) {
+		int attempt = 0;
+		int index = (newVal.hashCode() & lastIndex);
+		String currentSpot = hashTable[index];
+		while (currentSpot != null && currentSpot != EMPTY_SPOT) {
+			attempt++;
+			index = hashFunction(newVal,attempt);
+			currentSpot = hashTable[index];
+		}
+		hashTable[index] = newVal;
+		mySize++;
+	}
+	
 	@Override
+	/**
+	 * Adds a value to the table and increases the tableSize member. Then checks if the load factor is
+	 * greater than the accepted limit, and reHashes if needed.
+	 */
 	public boolean add(String newValue) {
 		if (newValue == null)
+			return false; // Check for invalid inputs.
+		
+		
+		// Only add if the table doesn't already contain this value.
+		if (contains(newValue)) {
 			return false;
-		
-		int attempt = 1;
-		int index = hashFunction(newValue,0);
-		String currentSpot = hashTable[index];
-		
-		if (!contains(newValue)) {
-			while (!(currentSpot == null || currentSpot == EMPTY_SPOT)) {
-				index = hashFunction(newValue,attempt);
-				currentSpot = hashTable[index];
-				attempt++;
-			}
-			hashTable[index] = newValue;
-			increaseSize();
-			if (loadFactor >= upperLoad) {
+		} else {
+			// Keep probing until an empty spot is found.
+			addUnique(newValue);
+			if (getLoadFactor() > upperLoad) {
+				increaseCapacity();
 				reHash();
 			}
 			return true;
 		}
-		
-		return false;
 	}
 
 	
-	/* (non-Javadoc)
-	 * @see SimpleHashSet#contains(java.lang.String)
-	 */
 	@Override
+	/**
+	 * Uses the findIndexOf() method to determine wheter an item is in the table or not.
+	 */
 	public boolean contains(String searchVal) {
 		int index = findIndexOf(searchVal);
 		if (index == -1) {
@@ -139,22 +149,25 @@ public class OpenHashSet extends SimpleHashSet {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see SimpleHashSet#delete(java.lang.String)
-	 */
 	@Override
+	/**
+	 * Uses findIndexOf() to find the string to delete and put a DELETED mark instead of it.
+	 * Then checks if a re hash is needed and does so if so.
+	 */
 	public boolean delete(String toDelete) {
 		if (toDelete == null)
-			return false;
+			return false; // Check for invalid input.
 		int index = findIndexOf(toDelete);
-		if (index != -1) {
-			hashTable[index] = EMPTY_SPOT;
-			decreaseSize();
-			if (loadFactor <= lowerLoad && myCapacity > 1) 
-				reHash();
-			return true;
-		} else {
+		if (index == -1) { // Meaning : if found.
 			return false;
+		} else {
+			hashTable[index] = EMPTY_SPOT;
+			mySize--;
+			if (getLoadFactor() < lowerLoad && myCapacity > 1) {
+				decreaseCapacity();
+				reHash();
+			}
+			return true;
 		}
 	}
 

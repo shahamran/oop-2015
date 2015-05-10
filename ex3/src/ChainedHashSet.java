@@ -1,13 +1,12 @@
 import java.util.LinkedList;
 
 public class ChainedHashSet extends SimpleHashSet {
-	protected Bucket[] hashTable;
+	private Bucket[] hashTable;
 	
 	private void setEmptyTable() {
 		mySize = 0;
 		myCapacity = START_CAPACITY;
 		hashTable = new Bucket[myCapacity];
-		loadFactor = 0;
 	}
 	
 	/**
@@ -48,13 +47,6 @@ public class ChainedHashSet extends SimpleHashSet {
 	 * If so, does nothing, Otherwise, re-hashes accordingly (builds a new sized array).
 	 */
 	private void reHash() {
-		if (loadFactor >= upperLoad) {
-			increaseCapacity();
-		} else if (loadFactor <= lowerLoad) {
-			decreaseCapacity();
-		} else {
-			return;
-		}
 		// Reset the table's size.
 		mySize = 0;
 		Bucket[] oldTable = hashTable;
@@ -79,16 +71,19 @@ public class ChainedHashSet extends SimpleHashSet {
 		if (newValue == null)
 			return false;
 		
-		int index = hashFunction(newValue);
+		int index = hashFunction(newValue,0);
 		if (hashTable[index] == null) 
 			hashTable[index] = new Bucket();
 		
 		if (hashTable[index].contains(newValue))
 			return false;
 		hashTable[index].add(newValue);
-		increaseSize();
-		if (loadFactor >= upperLoad)
+		mySize++;
+		if (getLoadFactor() > upperLoad) {
+			increaseCapacity();
 			reHash();
+		}
+			
 		return true;
 	}
 
@@ -100,7 +95,7 @@ public class ChainedHashSet extends SimpleHashSet {
 		if (searchVal == null)
 			return false;
 		
-		int index = hashFunction(searchVal);
+		int index = hashFunction(searchVal,0);
 		if (hashTable[index] != null) {
 			if (hashTable[index].contains(searchVal))
 				return true;
@@ -116,14 +111,17 @@ public class ChainedHashSet extends SimpleHashSet {
 		if (toDelete == null)
 			return false;
 		boolean couldDelete = false;
-		int index = hashFunction(toDelete);
+		int index = hashFunction(toDelete,0);
 		if (hashTable[index] != null) {
 			couldDelete = hashTable[index].delete(toDelete);
 		}
 		if (couldDelete) {
-			decreaseSize();
-			if (loadFactor <= lowerLoad)
+			mySize--;
+			if (getLoadFactor() < lowerLoad) {
+				decreaseCapacity();
 				reHash();
+			}
+				
 			return true;
 		} else {
 			return false;
