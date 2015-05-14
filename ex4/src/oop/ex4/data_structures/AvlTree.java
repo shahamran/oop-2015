@@ -2,16 +2,13 @@ package oop.ex4.data_structures;
 
 import java.util.*;
 
-public class AvlTree extends BstTree implements Iterable<Integer> {
-	private int mySize;
-	private Node root;
+public class AvlTree extends BstTree {
 	
 	/**
 	 * The default constructor.
 	 */
 	public AvlTree() {
-		mySize = 0;
-		root = null;
+		super();
 	}
 	
 	/**
@@ -55,7 +52,7 @@ public class AvlTree extends BstTree implements Iterable<Integer> {
 	 */
 	public boolean add(int newValue) {
 		if (super.add(newValue)) {
-			Node unbalancing = findUnbalancingNode(root);
+			Node unbalancing = findUnbalancingNode(myRoot);
 			if (unbalancing == null) {
 				return true;
 			} else {
@@ -100,10 +97,7 @@ public class AvlTree extends BstTree implements Iterable<Integer> {
 	 * in an ascending order, and does NOT implement the remove() method.
 	 */
 	public Iterator<Integer> iterator() {
-		Node current = min(root);
-		if (current == null)
-			return null;
-		return new TreeIterator(this);
+		return super.iterator();
 	}
 	
 	private void setHeights(Node avlRoot) {

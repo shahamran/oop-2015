@@ -41,46 +41,27 @@ public class Node {
 		right = newRight;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
-	public Node getLeft() {
-		return this.left;
+	public Node getParent() {
+		return parent;
 	}
 	
-	/**
-	 * 
-	 * @param newLeft
-	 * @return
-	 */
-	public boolean setLeft(Node newLeft) {
-		if (newLeft.getKey() < this.key){
-			left = newLeft;
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
 	public Node getRight() {
-		return this.right;
+		return right;
 	}
 	
-	/**
-	 * 
-	 * @param newRight
-	 * @return
-	 */
-	public boolean setRight(Node newRight) {
-		if (newRight.getKey() > this.key){
-			right = newRight;
-			return true;
+	public Node getLeft() {
+		return left;
+	}
+	
+	public boolean setNewChild(int newValue) {
+		if (newValue == key)
+			return false;
+		if (newValue > key) {
+			right = new Node(key,this);
+		} else {
+			left = new Node(key,this);
 		}
-		return false;
+		return true;
 	}
 	
 	/**

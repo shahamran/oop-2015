@@ -1,30 +1,56 @@
 package oop.ex4.data_structures;
 
-public class BstTree implements BinaryTree {
-	protected Node root;
+import java.util.Iterator;
+
+public class BstTree implements Iterable<Integer>,BinaryTree {
+	protected Node myRoot;
 	protected int mySize;
-	
+		
 	public BstTree() {
-		root = null;
+		myRoot = null;
 	}
 	
 	public BstTree(BstTree bstTree) {
 		this();
+		for (int val : bstTree) {
+			add(val);
+		}
 	}
 	
 	public Node getRoot() {
-		return root;
+		return myRoot;
 	}
 	
 	public boolean add(int newValue) {
-		if (root == null) {
-			root = new Node(newValue);
+		if (myRoot == null) {
+			myRoot = new Node(newValue);
+			mySize++;
+			return true;
+		}
+		Node current = myRoot;
+		boolean shouldStop = false;
+		while (!shouldStop) {
+			if (newValue < current.getKey()) {
+				if (current.getLeft() != null) {
+					current = current.getLeft();
+				} else {
+					shouldStop = true;
+				}
+			} else {
+				if (current.getRight() != null) {
+					current = current.getRight();
+				} else {
+					shouldStop = true;
+				}
+			}
+		}
+		
+		if (current.setNewChild(newValue)) {
 			mySize++;
 			return true;
 		} else {
-			
+			return false;
 		}
-		return false;
 	}
 	
 	public boolean delete(int toDelete) {
@@ -39,7 +65,7 @@ public class BstTree implements BinaryTree {
 		return mySize;
 	}
 	
-	protected Node min(Node subTree) {
+	public static Node getMin(Node subTree) {
 		if (subTree == null)
 			return null;
 		Node current = subTree;
@@ -49,7 +75,7 @@ public class BstTree implements BinaryTree {
 		return current;
 	}
 	
-	protected Node max(Node subTree) {
+	public static Node getMax(Node subTree) {
 		if (subTree == null)
 			return null;
 		Node current = subTree;
@@ -59,7 +85,27 @@ public class BstTree implements BinaryTree {
 		return current;
 	}
 	
-	protected Node successor(Node x) {
+	public static Node successor(Node x) {
+		if (x == null)
+			return null;
+		
+		if (x.getRight() != null) 
+			return getMin(x.getRight());
+
+		Node current = x;
+		while (current.getParent() != null) {
+			if (current.getParent().getLeft() == current) {
+				return current.getParent();
+			} else {
+				current = current.getParent();
+			}
+		}
 		return null;
+		
+	}
+
+	@Override
+	public Iterator<Integer> iterator() {
+		return new BstIterator(myRoot);
 	}
 }
