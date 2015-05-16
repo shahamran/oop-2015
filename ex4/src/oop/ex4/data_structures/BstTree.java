@@ -2,12 +2,21 @@ package oop.ex4.data_structures;
 
 import java.util.Iterator;
 
-public class BstTree implements Iterable<Integer>,BinaryTree {
+public class BstTree implements Iterable<Integer>, BinaryTree {
 	protected Node myRoot;
 	protected int mySize;
 		
 	public BstTree() {
 		myRoot = null;
+	}
+	
+	public BstTree(int[] data) {
+		this();
+		if (data == null)
+			return;
+		for (int val : data) {
+			add(val);
+		}
 	}
 	
 	public BstTree(BstTree bstTree) {
@@ -27,38 +36,85 @@ public class BstTree implements Iterable<Integer>,BinaryTree {
 			mySize++;
 			return true;
 		}
-		Node current = myRoot;
-		boolean shouldStop = false;
-		while (!shouldStop) {
-			if (newValue < current.getKey()) {
-				if (current.getLeft() != null) {
-					current = current.getLeft();
-				} else {
-					shouldStop = true;
-				}
-			} else {
-				if (current.getRight() != null) {
-					current = current.getRight();
-				} else {
-					shouldStop = true;
-				}
-			}
-		}
-		
-		if (current.setNewChild(newValue)) {
-			mySize++;
-			return true;
-		} else {
+		Node addTo = getNodeWithVal(newValue);
+		if (addTo.getKey() == newValue) {
 			return false;
+		} else {
+			return addTo.setChild(new Node(newValue,addTo));
 		}
 	}
 	
 	public boolean delete(int toDelete) {
-		return false;
+		Node nodeToDelete = getNodeWithVal(toDelete);
+		if (nodeToDelete == null)
+			return false;
+		if (nodeToDelete.getKey() != toDelete)
+			return false;
+		Node parent = nodeToDelete.getParent(),
+			 left = nodeToDelete.getLeft(),
+			 right = nodeToDelete.getRight();
+		if (left == null) {
+			if (parent == null) {
+				myRoot = right;
+			} else {
+				if (toDelete < parent.getKey()) {
+					parent.setLeft(right);
+				} else {
+					parent.setRight(right);
+				}
+			}
+		} else if (right == null) {
+			if (parent == null) {
+				myRoot = left;
+			} else {
+				if (toDelete < parent.getKey()) {
+					parent.setLeft(left);
+				} else {
+					parent.setRight(left);
+				}
+			}
+		} else {
+			Node succ = successor(nodeToDelete);
+			delete(succ.getKey());
+			mySize++;
+			succ.setParent(parent);
+			succ.setLeft(left);
+			succ.setRight(right);
+			if (parent != null) {
+				parent.setChild(succ);
+			}
+		}
+		mySize--;
+		return true;
+	}
+	
+	/**
+	 * 
+	 * @param searchVal
+	 * @return
+	 */
+	protected Node getNodeWithVal(int searchVal) {
+		Node current = myRoot,last = myRoot;
+		while (current != null) {
+			if (searchVal == current.getKey()) {
+				return current;
+			} else if (searchVal < current.getKey()) {
+				last = current;
+				current = current.getLeft();
+			} else {
+				last = current;
+				current = current.getRight();
+			}
+		}
+		return last;
 	}
 	
 	public int contains(int searchVal) {
-		return -1;
+		Node searchNode = getNodeWithVal(searchVal);
+		if (searchNode.getKey() == searchVal) {
+			
+		}
+		return 0;
 	}
 	
 	public int size() {

@@ -49,19 +49,51 @@ public class Node {
 		return right;
 	}
 	
+	public boolean setRight(Node newRight) {
+		if (newRight == null) {
+			right = null;
+			return true;
+		}
+		if (newRight.getKey() > key) {
+			right = newRight;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public Node getLeft() {
 		return left;
 	}
 	
-	public boolean setNewChild(int newValue) {
-		if (newValue == key)
-			return false;
-		if (newValue > key) {
-			right = new Node(key,this);
-		} else {
-			left = new Node(key,this);
+	public boolean setLeft(Node newLeft) {
+		if (newLeft == null) {
+			left = null;
+			return true;
 		}
-		return true;
+		if (newLeft.getKey() < key) {
+			left = newLeft;
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean setChild(Node newChild) {
+		if (newChild == null) {
+			return false;
+		}
+		if (newChild.getKey() > this.key) {
+			return setRight(newChild);
+		} else if (newChild.getKey() < this.key) {
+			 return setLeft(newChild);
+		} else {
+			return false;
+		}
+	}
+	
+	public void setParent(Node newParent) {
+		parent = newParent;
 	}
 	
 	/**
