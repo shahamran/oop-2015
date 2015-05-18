@@ -18,29 +18,6 @@ public class Node {
 		left = null; right = null; parent = null;
 	}
 	
-	/**
-	 * 
-	 * @param newKey
-	 * @param newParent
-	 */
-	public Node(int newKey, Node newParent) {
-		parent = newParent;
-		key = newKey;
-	}
-	
-	/**
-	 * 
-	 * @param newKey
-	 * @param newParent
-	 * @param newLeft
-	 * @param newRight
-	 */
-	public Node(int newKey, Node newParent, Node newLeft, Node newRight) {
-		this(newKey, newParent);
-		left = newLeft;
-		right = newRight;
-	}
-	
 	public Node getParent() {
 		return parent;
 	}
@@ -56,6 +33,7 @@ public class Node {
 		}
 		if (newRight.getKey() > key) {
 			right = newRight;
+			newRight.setParent(this);
 			return true;
 		} else {
 			return false;
@@ -71,22 +49,22 @@ public class Node {
 			left = null;
 			return true;
 		}
+		
 		if (newLeft.getKey() < key) {
 			left = newLeft;
+			newLeft.setParent(this);
 			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	public boolean setChild(Node newChild) {
-		if (newChild == null) {
-			return false;
-		}
-		if (newChild.getKey() > this.key) {
-			return setRight(newChild);
-		} else if (newChild.getKey() < this.key) {
-			 return setLeft(newChild);
+	public boolean setChild(int newVal) {
+		Node newNode = new Node(newVal);;
+		if (newVal > this.key) { 
+			return setRight(newNode);
+		} else if (newVal < this.key) {
+			 return setLeft(newNode);
 		} else {
 			return false;
 		}
@@ -108,14 +86,6 @@ public class Node {
 	 * 
 	 * @return
 	 */
-	public boolean isRoot() {
-		return (parent == null);
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
 	public int getHeight() {
 		return this.height;
 	}
@@ -127,4 +97,5 @@ public class Node {
 	public void setHeight(int newHeight) {
 		height = newHeight;
 	}
+	
 }

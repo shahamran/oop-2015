@@ -3,7 +3,7 @@ package oop.ex4.data_structures;
 import java.util.*;
 
 public class AvlTree extends BstTree {
-	private static final int LEAF_HEIGHT = 0, NOT_FOUND = -1, NOT_AVL = -2;
+	private static final int LEAF_HEIGHT = 0;
 	
 	/**
 	 * The default constructor.
@@ -46,7 +46,8 @@ public class AvlTree extends BstTree {
 	public boolean add(int newValue) {
 		if (super.add(newValue)) {
 			setHeights(myRoot);
-			Node unbalancing = findUnbalancingNode(myRoot);
+			Node addedNode = getNodeWithVal(newValue);
+			Node unbalancing = findUnbalancingNode(addedNode);
 			if (unbalancing != null) 
 				fixAvl(unbalancing);
 			return true;
@@ -63,19 +64,7 @@ public class AvlTree extends BstTree {
 	 * the tree, -1 otherwise.
 	 */
 	public int contains(int searchVal) {
-		int depth = 0;
-		Node current = myRoot;
-		while (current != null) {
-			if (searchVal == current.getKey()) {
-				return depth;
-			} else if (searchVal > current.getKey()) {
-				current = current.getRight();
-			} else {
-				current = current.getLeft();
-			}
-			depth++;
-		}
-		return NOT_FOUND;
+		return super.contains(searchVal);
 	}
 	
 	/**
@@ -101,7 +90,7 @@ public class AvlTree extends BstTree {
 	 * @return the number of nodes in the tree.
 	 */
 	public int size() {
-		return mySize;
+		return super.size();
 	}
 	
 	/**
@@ -113,80 +102,88 @@ public class AvlTree extends BstTree {
 	}
 	
 	private void fixAvl(Node unbalancing) {
-		int left = unbalancing.getLeft().getHeight(),
-			right = unbalancing.getRight().getHeight();
+		int left,right;
+		left = getHeightOf(unbalancing.getLeft());
+		right = getHeightOf(unbalancing.getRight());
 		
 		if (left > right) {
-			left = unbalancing.getLeft().getLeft().getHeight();
-			right = unbalancing.getLeft().getRight().getHeight();
+			left = getHeightOf(unbalancing.getLeft().getLeft());
+			right = getHeightOf(unbalancing.getLeft().getRight());
 			if (left > right) {
 				rotateLL(unbalancing);
 			} else {
 				rotateLR(unbalancing);
 			}
 		} else {
-			left = unbalancing.getRight().getLeft().getHeight();
-			right = unbalancing.getRight().getRight().getHeight();
+			left = getHeightOf(unbalancing.getRight().getLeft());
+			right = getHeightOf(unbalancing.getRight().getRight());
 			if (left > right) {
 				rotateRL(unbalancing);
 			} else {
 				rotateRR(unbalancing);
 			}
 		}
-		setHeights(unbalancing);
+		setHeights(myRoot);
 	}
 	
 	private void rotateLL(Node x) {
-		Node tempRight = x.getLeft().getRight();
-		x.getLeft().setParent(x.getParent());
-		x.setParent(x.getLeft());
-		x.getLeft().setRight(x);
-		x.setLeft(tempRight);
+		Node tempParent = x.getParent(), left = x.getLeft();
+		x.setLeft(left.getRight());
+		left.setRight(x);
+		if (tempParent != null) {
+			if (tempParent.getKey() > left.getKey()) {
+				tempParent.setLeft(left);
+			} else {
+				tempParent.setRight(left);
+			}
+		} else {
+			myRoot = left;
+			left.setParent(null);
+		}
 	}
 	
 	private void rotateLR(Node x) {
-		Node tempLR = x.getLeft().getRight();
-		tempLR.setParent(x);
-		x.getLeft().setRight(tempLR.getLeft());
-		tempLR.setLeft(x.getLeft());
-		x.getLeft().setParent(tempLR);
+		Node left = x.getLeft(), tempLR = left.getRight();
+		left.setRight(tempLR.getLeft());
+		tempLR.setLeft(left);
 		x.setLeft(tempLR);
-		rotateLL(x);	
+		rotateLL(x);
 	}
 
 	private void rotateRL(Node x) {
-		Node tempRL = x.getRight().getLeft();
-		tempRL.setParent(x);
-		x.getRight().setLeft(tempRL.getRight());
-		tempRL.setRight(x.getRight());
-		x.getRight().setParent(tempRL);
+		Node right = x.getRight(), tempRL = right.getLeft();
+		right.setLeft(tempRL.getRight());
+		tempRL.setRight(right);
 		x.setRight(tempRL);
 		rotateRR(x);
 	}
 	
 	private void rotateRR(Node x) {
-		Node tempLeft = x.getRight().getLeft();
-		x.getRight().setParent(x.getParent());
-		x.setParent(x.getRight());
-		x.getRight().setLeft(x);
-		x.setRight(tempLeft);
+		Node tempParent = x.getParent(), right = x.getRight();
+		x.setRight(right.getLeft());
+		right.setLeft(x);
+		if (tempParent != null) {
+			if (tempParent.getKey() > right.getKey()) {
+				tempParent.setLeft(right);
+			} else {
+				tempParent.setRight(right);
+			}
+		} else {
+			myRoot = right;
+			right.setParent(null);
+		}
 	}
 	
 	private Node findUnbalancingNode(Node x) {
 		if (x == null) 
 			return null;
 		int left,right;
-		left = x.getLeft() != null ? x.getLeft().getHeight() : -1;
-		right = x.getRight() != null ? x.getRight().getHeight() : -1;
+		left = getHeightOf(x.getLeft());
+		right = getHeightOf(x.getRight());
 		if (Math.abs(left - right) > 1) {
 			return x;
 		}
-		Node leftUnbalancing = findUnbalancingNode(x.getLeft());
-		if (leftUnbalancing != null) {
-			return leftUnbalancing;
-		} else {
-			return findUnbalancingNode(x.getRight());
-		}
+		return (findUnbalancingNode(x.getParent()));
 	}
 	
 	/**
@@ -196,27 +193,14 @@ public class AvlTree extends BstTree {
 	 * @return the minimum number of nodes in an AVL tree of the given height.
 	 */
 	public static int findMinNodes(int h) {
-		return 0;
-	}
-	
-	
-	private int isAvl(Node x) {
-		if (x == null) {
-			return LEAF_HEIGHT - 1;
-		}
-		int left = isAvl(x.getLeft());
-		if (left == NOT_AVL) {
-			return NOT_AVL;
-		}
-		int right = isAvl(x.getRight());
-		if (right == NOT_AVL) {
-			return NOT_AVL;
-		}
-		if (Math.abs(left - right) > 1) {
-			return NOT_AVL;
+		if (h < 0) 
+			return 0;
+		if (h == 0) {
+			return 1;
+		} else if (h == 1) {
+			return 2;
 		} else {
-			x.setHeight(Math.max(left, right) + 1);
-			return x.getHeight();
+			return findMinNodes(h-1) + findMinNodes(h-2) + 1;
 		}
 	}
 	
@@ -227,6 +211,12 @@ public class AvlTree extends BstTree {
 		int left = setHeights(x.getLeft()), right = setHeights(x.getRight());
 		x.setHeight(Math.max(left, right) + 1);
 		return x.getHeight();
+	}
+	
+	private int getHeightOf(Node x) {
+		if (x == null) 
+			return LEAF_HEIGHT - 1;
+		return x.getHeight();	
 	}
 	
 }

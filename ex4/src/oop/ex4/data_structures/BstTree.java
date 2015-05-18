@@ -5,9 +5,11 @@ import java.util.Iterator;
 public class BstTree implements Iterable<Integer>, BinaryTree {
 	protected Node myRoot;
 	protected int mySize;
+	protected static final int NOT_FOUND = -1;
 		
 	public BstTree() {
 		myRoot = null;
+		mySize = 0;
 	}
 	
 	public BstTree(int[] data) {
@@ -36,12 +38,51 @@ public class BstTree implements Iterable<Integer>, BinaryTree {
 			mySize++;
 			return true;
 		}
-		Node addTo = getNodeWithVal(newValue);
-		if (addTo.getKey() == newValue) {
-			return false;
-		} else {
-			return addTo.setChild(new Node(newValue,addTo));
+		Node current = myRoot, last = null;
+		while ( !(current == null) ) {
+			if (current.getKey() == newValue) {
+				return false;
+			} else {
+				last  = current;
+				if (newValue < current.getKey()) {
+					current = current.getLeft();
+				} else {
+				current = current.getRight();
+				}
+			}
 		}
+		mySize++;
+		return last.setChild(newValue);
+	}
+	
+	private boolean deleteSimpleNode(Node x) {
+		if (x == null)
+			return false;
+		Node left,right,parent, toReplace;
+		int key = x.getKey();
+		left = x.getLeft();
+		right = x.getRight();
+		parent = x.getParent();
+		
+		if (left == null) {
+			toReplace = right;
+		} else if (right == null) {
+			toReplace = left;
+		} else {
+			return false;
+		}
+		
+		if (parent == null) {
+			myRoot = toReplace;
+		} else {
+			if (key < parent.getKey()) {
+				parent.setLeft(toReplace);
+			} else {
+				parent.setRight(toReplace);
+			}
+		}
+		mySize--;
+		return true;
 	}
 	
 	public boolean delete(int toDelete) {
@@ -50,71 +91,64 @@ public class BstTree implements Iterable<Integer>, BinaryTree {
 			return false;
 		if (nodeToDelete.getKey() != toDelete)
 			return false;
+		
 		Node parent = nodeToDelete.getParent(),
 			 left = nodeToDelete.getLeft(),
 			 right = nodeToDelete.getRight();
-		if (left == null) {
-			if (parent == null) {
-				myRoot = right;
-			} else {
-				if (toDelete < parent.getKey()) {
-					parent.setLeft(right);
-				} else {
-					parent.setRight(right);
-				}
-			}
-		} else if (right == null) {
-			if (parent == null) {
-				myRoot = left;
-			} else {
-				if (toDelete < parent.getKey()) {
-					parent.setLeft(left);
-				} else {
-					parent.setRight(left);
-				}
-			}
-		} else {
+		if (!deleteSimpleNode(nodeToDelete)) {
 			Node succ = successor(nodeToDelete);
-			delete(succ.getKey());
-			mySize++;
-			succ.setParent(parent);
+			deleteSimpleNode(succ);
+			if (parent != null) {
+				if (toDelete < parent.getKey()) {
+					parent.setLeft(succ);
+				} else {
+					parent.setRight(succ);
+				}
+			}
 			succ.setLeft(left);
 			succ.setRight(right);
-			if (parent != null) {
-				parent.setChild(succ);
-			}
 		}
-		mySize--;
 		return true;
 	}
 	
 	/**
-	 * 
-	 * @param searchVal
-	 * @return
+	 * Searches the tree for a node with a certain value.
+	 * Returns it if found, otherwise returns the node where it should be added.
+	 * @param searchVal The value to search for.
+	 * @return The node with the given value if it's in the tree, otherwise the node that will be its
+	 * parent if it is added.
 	 */
 	protected Node getNodeWithVal(int searchVal) {
-		Node current = myRoot,last = myRoot;
+		Node current = myRoot,last = null;
 		while (current != null) {
 			if (searchVal == current.getKey()) {
 				return current;
-			} else if (searchVal < current.getKey()) {
-				last = current;
-				current = current.getLeft();
 			} else {
 				last = current;
-				current = current.getRight();
+				if (searchVal < current.getKey()) {
+					current = current.getLeft();
+				} else {
+					current = current.getRight();
+				}
 			}
 		}
 		return last;
 	}
 	
 	public int contains(int searchVal) {
-		Node searchNode = getNodeWithVal(searchVal);
-		if (searchNode.getKey() == searchVal) {
-			
+		int depth = 0;
+		Node current = myRoot;
+		while (current != null) {
+			if (searchVal == current.getKey()) {
+				return depth;
+			} else if (searchVal > current.getKey()) {
+				current = current.getRight();
+			} else {
+				current = current.getLeft();
+			}
+			depth++;
 		}
-		return 0;
+		return NOT_FOUND;
 	}
 	
 	public int size() {
@@ -124,9 +158,10 @@ public class BstTree implements Iterable<Integer>, BinaryTree {
 	public static Node getMin(Node subTree) {
 		if (subTree == null)
 			return null;
-		Node current = subTree;
-		while (current.getLeft() != null) {
-			current = current.getLeft();
+		Node current = subTree, left = current.getLeft();
+		while (left != null) {
+			current = left;
+			left = current.getLeft();
 		}
 		return current;
 	}
@@ -134,9 +169,10 @@ public class BstTree implements Iterable<Integer>, BinaryTree {
 	public static Node getMax(Node subTree) {
 		if (subTree == null)
 			return null;
-		Node current = subTree;
-		while (current.getRight() != null) {
-			current = current.getRight();
+		Node current = subTree, right = current.getRight();
+		while (right != null) {
+			current = right;
+			right = current.getRight();
 		}
 		return current;
 	}
@@ -148,16 +184,16 @@ public class BstTree implements Iterable<Integer>, BinaryTree {
 		if (x.getRight() != null) 
 			return getMin(x.getRight());
 
-		Node current = x;
-		while (current.getParent() != null) {
-			if (current.getParent().getLeft() == current) {
-				return current.getParent();
+		Node current = x, parent = x.getParent();
+		while (parent != null) {
+			if (parent.getLeft() == current) {
+				return parent;
 			} else {
-				current = current.getParent();
+				current = parent;
+				parent = current.getParent();
 			}
 		}
 		return null;
-		
 	}
 
 	@Override

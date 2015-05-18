@@ -15,7 +15,7 @@ public class BstIterator implements Iterator<Integer> {
 	
 	@Override
 	public boolean hasNext() {
-		return BstTree.successor(current) != null;
+		return current != null;
 	}
 
 	@Override
@@ -24,5 +24,12 @@ public class BstIterator implements Iterator<Integer> {
 		current = BstTree.successor(current);
 		return val;
 	}
+
+	@Override
+	public void remove() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

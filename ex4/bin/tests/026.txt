@@ -1,3 +1,0 @@
-# minNodes - 0 
-
-minNodes 0 1
