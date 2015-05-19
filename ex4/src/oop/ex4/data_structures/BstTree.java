@@ -2,7 +2,7 @@ package oop.ex4.data_structures;
 
 import java.util.Iterator;
 
-public class BstTree implements Iterable<Integer>, BinaryTree {
+public class BstTree implements BinaryTree {
 	protected Node myRoot;
 	protected int mySize;
 	protected static final int NOT_FOUND = -1;
@@ -55,6 +55,7 @@ public class BstTree implements Iterable<Integer>, BinaryTree {
 		return last.setChild(newValue);
 	}
 	
+	
 	private boolean deleteSimpleNode(Node x) {
 		if (x == null)
 			return false;
@@ -104,6 +105,8 @@ public class BstTree implements Iterable<Integer>, BinaryTree {
 				} else {
 					parent.setRight(succ);
 				}
+			} else {
+				myRoot = succ;
 			}
 			succ.setLeft(left);
 			succ.setRight(right);
