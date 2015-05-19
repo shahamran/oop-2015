@@ -45,9 +45,9 @@ public class AvlTree extends BstTree {
 	 */
 	public boolean add(int newValue) {
 		if (super.add(newValue)) {
-			setHeights(myRoot);
-			Node addedNode = getNodeWithVal(newValue);
-			Node unbalancing = findUnbalancingNode(addedNode);
+			setHeights(myRoot); // Update nodes' heights.
+			Node addedNode = getNodeWithVal(newValue); // Search the tree for the added node.
+			Node unbalancing = findUnbalancingNode(addedNode); // Check the AVL property.
 			if (unbalancing != null) 
 				fixAvl(unbalancing);
 			return true;
@@ -74,15 +74,23 @@ public class AvlTree extends BstTree {
 	 * @return true if the give value was found and deleted, false otherwise.
 	 */
 	public boolean delete(int toDelete) {
-		if (super.delete(toDelete)) {
+		if (contains(toDelete) == NOT_FOUND)
+			return false;
+		Node deleted = super.deleteAndGet(toDelete);
+		if (deleted != null) {
 			setHeights(myRoot);
-			Node unbalancing = findUnbalancingNode(myRoot);
-			if (unbalancing != null) {
+			Node unbalancing = findUnbalancingNode(deleted);
+			while (unbalancing != null) {
 				fixAvl(unbalancing);
+				unbalancing = findUnbalancingNode(unbalancing);
 			}
 			return true;
 		} else {
-			return false;
+			if (mySize == 0) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 	
@@ -101,7 +109,27 @@ public class AvlTree extends BstTree {
 		return super.iterator();
 	}
 	
+	/**
+	 * Calculates the minimum number of nodes in an AVL tree of the height h.
+	 * 
+	 * @param h the height of the tree (a non-negative number) in question.
+	 * @return the minimum number of nodes in an AVL tree of the given height.
+	 */
+	public static int findMinNodes(int h) {
+		if (h < 0) {
+			return 0;
+		} else {
+			return findMinNodes(h-1) + findMinNodes(h-2) + 1;
+		}
+	}
+	
+	/*
+	 * Fixes the AVL property by rotating around the unbalancing Node according to the tree state.
+	 */
 	private void fixAvl(Node unbalancing) {
+		if (unbalancing == null)
+			return;
+		
 		int left,right;
 		left = getHeightOf(unbalancing.getLeft());
 		right = getHeightOf(unbalancing.getRight());
@@ -126,6 +154,9 @@ public class AvlTree extends BstTree {
 		setHeights(myRoot);
 	}
 	
+	/*
+	 * Fix AVL LL situation
+	 */
 	private void rotateLL(Node x) {
 		Node tempParent = x.getParent(), left = x.getLeft();
 		x.setLeft(left.getRight());
@@ -142,6 +173,9 @@ public class AvlTree extends BstTree {
 		}
 	}
 	
+	/*
+	 * Fix AVL LR situation
+	 */
 	private void rotateLR(Node x) {
 		Node left = x.getLeft(), tempLR = left.getRight();
 		left.setRight(tempLR.getLeft());
@@ -149,7 +183,10 @@ public class AvlTree extends BstTree {
 		x.setLeft(tempLR);
 		rotateLL(x);
 	}
-
+	
+	/*
+	 * Fix AVL RL situation
+	 */
 	private void rotateRL(Node x) {
 		Node right = x.getRight(), tempRL = right.getLeft();
 		right.setLeft(tempRL.getRight());
@@ -158,6 +195,9 @@ public class AvlTree extends BstTree {
 		rotateRR(x);
 	}
 	
+	/*
+	 * Fix AVL RR situation
+	 */
 	private void rotateRR(Node x) {
 		Node tempParent = x.getParent(), right = x.getRight();
 		x.setRight(right.getLeft());
@@ -174,6 +214,9 @@ public class AvlTree extends BstTree {
 		}
 	}
 	
+	/*
+	 * Checks all the nodes from a given node to the root if the avl property is broken. 
+	 */
 	private Node findUnbalancingNode(Node x) {
 		if (x == null) 
 			return null;
@@ -183,23 +226,13 @@ public class AvlTree extends BstTree {
 		if (Math.abs(left - right) > 1) {
 			return x;
 		}
+		// Recursively check every node up to the root.
 		return (findUnbalancingNode(x.getParent()));
 	}
 	
-	/**
-	 * Calculates the minimum number of nodes in an AVL tree of the height h.
-	 * 
-	 * @param h the height of the tree (a non-negative number) in question.
-	 * @return the minimum number of nodes in an AVL tree of the given height.
+	/*
+	 * Sets the heights of the subtree x's nodes recursively.
 	 */
-	public static int findMinNodes(int h) {
-		if (h < 0) {
-			return 0;
-		} else {
-			return findMinNodes(h-1) + findMinNodes(h-2) + 1;
-		}
-	}
-	
 	private int setHeights(Node x) {
 		if (x == null) {
 			return LEAF_HEIGHT - 1;
@@ -209,6 +242,9 @@ public class AvlTree extends BstTree {
 		return x.getHeight();
 	}
 	
+	/*
+	 * @return The height of a node if it exists, -1 otherwise.
+	 */
 	private int getHeightOf(Node x) {
 		if (x == null) 
 			return LEAF_HEIGHT - 1;

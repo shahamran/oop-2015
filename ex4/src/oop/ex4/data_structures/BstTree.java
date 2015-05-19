@@ -1,8 +1,10 @@
 package oop.ex4.data_structures;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.lang.UnsupportedOperationException;
 
-public class BstTree implements BinaryTree {
+public class BstTree implements Iterable<Integer> {
 	protected Node myRoot;
 	protected int mySize;
 	protected static final int NOT_FOUND = -1;
@@ -32,6 +34,13 @@ public class BstTree implements BinaryTree {
 		return myRoot;
 	}
 	
+	/**
+	 * Add a new node with the given key to the tree.
+	 * 
+	 * @param newValue the value of the new node to add.
+	 * @return true if the value to add is not already in the tree and it was successfully added,
+	 * false otherwise.
+	 */
 	public boolean add(int newValue) {
 		if (myRoot == null) {
 			myRoot = new Node(newValue);
@@ -55,11 +64,15 @@ public class BstTree implements BinaryTree {
 		return last.setChild(newValue);
 	}
 	
-	
-	private boolean deleteSimpleNode(Node x) {
+	/*
+	 * Attempts to delete a node.
+	 * Will return a value (other than null) if the node exists and it has no more than ONE child.
+	 * Returns null if the node doesn't exists or it has 2 children.
+	 */
+	private Node deleteSimpleNode(Node x) {
 		if (x == null)
-			return false;
-		Node left,right,parent, toReplace;
+			return null;
+		Node left, right, parent, toReplace, toReturn;
 		int key = x.getKey();
 		left = x.getLeft();
 		right = x.getRight();
@@ -70,12 +83,14 @@ public class BstTree implements BinaryTree {
 		} else if (right == null) {
 			toReplace = left;
 		} else {
-			return false;
+			return null; // This means the node has 2 children.
 		}
-		
+		// From here on, the deletion should succeed.
 		if (parent == null) {
-			myRoot = toReplace;
+			toReturn = toReplace;
+			myRoot = toReplace; // Update the root if it is being deleted.
 		} else {
+			toReturn = parent;
 			if (key < parent.getKey()) {
 				parent.setLeft(toReplace);
 			} else {
@@ -83,35 +98,57 @@ public class BstTree implements BinaryTree {
 			}
 		}
 		mySize--;
-		return true;
+		return toReturn;
 	}
 	
-	public boolean delete(int toDelete) {
+	/*
+	 * Attempts to delete a node with a given value.
+	 * Returns the node
+	 */
+	protected Node deleteAndGet(int toDelete) {
 		Node nodeToDelete = getNodeWithVal(toDelete);
-		if (nodeToDelete == null)
-			return false;
-		if (nodeToDelete.getKey() != toDelete)
-			return false;
+		if (nodeToDelete == null) {
+			return null;
+		} else if (nodeToDelete.getKey() != toDelete) {
+			return null;
+		}
 		
 		Node parent = nodeToDelete.getParent(),
 			 left = nodeToDelete.getLeft(),
 			 right = nodeToDelete.getRight();
-		if (!deleteSimpleNode(nodeToDelete)) {
-			Node succ = successor(nodeToDelete);
-			deleteSimpleNode(succ);
+		Node deleted = deleteSimpleNode(nodeToDelete); // Tries to delete the node.
+		if (mySize == 0)
+			return null;
+		if (deleted == null) { // This means the node has 2 children
+			deleted = successor(nodeToDelete);
+			deleteSimpleNode(deleted);
 			if (parent != null) {
 				if (toDelete < parent.getKey()) {
-					parent.setLeft(succ);
+					parent.setLeft(deleted);
 				} else {
-					parent.setRight(succ);
+					parent.setRight(deleted);
 				}
 			} else {
-				myRoot = succ;
+				myRoot = deleted;
 			}
-			succ.setLeft(left);
-			succ.setRight(right);
+			deleted.setLeft(left);
+			deleted.setRight(right);
 		}
-		return true;
+		return deleted;
+		
+	}
+	
+	/**
+	 * Removes the node with the given value from the tree, if it exists.
+	 * 
+	 * @param toDelete the value to remove from the tree.
+	 * @return true if the give value was found and deleted, false otherwise.
+	 */
+	public boolean delete(int toDelete) {
+		if (contains(toDelete) == NOT_FOUND) {
+			return false;
+		}
+		return deleteAndGet(toDelete) != null || mySize == 0;
 	}
 	
 	/**
@@ -138,6 +175,13 @@ public class BstTree implements BinaryTree {
 		return last;
 	}
 	
+	/**
+	 * Check whether the tree contains the given input value.
+	 * 
+	 * @param searchVal the value to search for.
+	 * @return the depth of the node (0 for the root) with the given value if it was found in
+	 * the tree, -1 otherwise.
+	 */
 	public int contains(int searchVal) {
 		int depth = 0;
 		Node current = myRoot;
@@ -154,11 +198,18 @@ public class BstTree implements BinaryTree {
 		return NOT_FOUND;
 	}
 	
+	/**
+	 * @return the number of nodes in the tree.
+	 */
 	public int size() {
 		return mySize;
 	}
 	
-	public static Node getMin(Node subTree) {
+	/**
+	 * @param subTree The root of a subtree.
+	 * @return The min node in the given subtree.
+	 */
+	protected static Node getMin(Node subTree) {
 		if (subTree == null)
 			return null;
 		Node current = subTree, left = current.getLeft();
@@ -169,7 +220,11 @@ public class BstTree implements BinaryTree {
 		return current;
 	}
 	
-	public static Node getMax(Node subTree) {
+	/**
+	 * @param subTree The root of a subtree.
+	 * @return The max node in the given subtree.
+	 */
+	protected static Node getMax(Node subTree) {
 		if (subTree == null)
 			return null;
 		Node current = subTree, right = current.getRight();
@@ -180,10 +235,15 @@ public class BstTree implements BinaryTree {
 		return current;
 	}
 	
-	public static Node successor(Node x) {
+	/**
+	 * Returns the successor of a given node.
+	 * @param x The node to check.
+	 * @return The node after it in the tree.
+	 */
+	protected static Node successor(Node x) {
 		if (x == null)
 			return null;
-		
+
 		if (x.getRight() != null) 
 			return getMin(x.getRight());
 
@@ -200,7 +260,47 @@ public class BstTree implements BinaryTree {
 	}
 
 	@Override
+	/**
+	 * Returns an iterator that iterates over the BST in ascending order.
+	 */
 	public Iterator<Integer> iterator() {
+		/**
+		 * A local Iterator on bst trees.
+		 * @author ransha
+		 */
+		class BstIterator implements Iterator<Integer> {
+			Node current;
+			
+			BstIterator(Node root) {
+				if (root == null) {
+					current = null;
+				} else {
+					// The first node when iterating (in-order) is the minimum value of this tree.
+					current = BstTree.getMin(root);
+				}
+			}
+
+			@Override
+			public boolean hasNext() {
+				return current != null;
+			}
+
+			@Override
+			public Integer next() {
+				if (!hasNext())
+					throw new NoSuchElementException();
+				int val = current.getKey();
+				// Switch to the next node in the tree.
+				current = BstTree.successor(current);
+				return val;
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+		}
+		// Local class ends HERE.
 		return new BstIterator(myRoot);
 	}
 }

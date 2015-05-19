@@ -1,6 +1,7 @@
-package oop.ex4.data_structures;
+
 
 import java.util.Scanner;
+import oop.ex4.data_structures.*;
 
 public class SimpleTest {
 	private static Scanner scanner = new Scanner(System.in);
@@ -9,7 +10,7 @@ public class SimpleTest {
 	private static final String BST = "bst", AVL = "avl";
 	
 	public static void main(String[] args) {
-		BinaryTree myTree;
+		BstTree myTree;
 		System.out.println("Welcome. Type " + OPTIONS + " to print options.");
 		myTree = constructTree();
 		String userInput = "";
@@ -19,7 +20,7 @@ public class SimpleTest {
 		
 	}
 	
-	private static String manageInput(BinaryTree myTree) {
+	private static String manageInput(BstTree myTree) {
 		String userInput,msg;
 		msg = "What do you want to do?";
 		String[] valid = {ADD,REMOVE,CONTAINS,ITERATE,SIZE,END};
@@ -46,37 +47,37 @@ public class SimpleTest {
 		return "";
 	}
 	
-	private static void addToTree(BinaryTree myTree) {
+	private static void addToTree(BstTree myTree) {
 		int userInput;
 		System.out.print("Enter a number to add: ");
 		userInput = scanner.nextInt();
 		System.out.println(myTree.add(userInput));
 	}
 	
-	private static void removeFromTree(BinaryTree myTree) {
+	private static void removeFromTree(BstTree myTree) {
 		int userInput;
 		System.out.print("Enter a number to remove: ");
 		userInput = scanner.nextInt();
 		System.out.println(myTree.delete(userInput));
 	}
 	
-	private static void checkContains(BinaryTree myTree) {
+	private static void checkContains(BstTree myTree) {
 		int userInput;
 		System.out.print("Enter a number to check: ");
 		userInput = scanner.nextInt();
 		System.out.println(myTree.contains(userInput));
 	}
 	
-	private static void iterateOnTree(BinaryTree myTree) {
+	private static void iterateOnTree(BstTree myTree) {
 		for (int val : myTree) {
 			System.out.println(val);
 		}
 	}
 	
-	private static BinaryTree constructTree() {
+	private static BstTree constructTree() {
 		String constructor,treeType,msg;
 		String[] valid;
-		BinaryTree myTree = null;
+		BstTree myTree = null;
 		
 		msg = "Which type of constructor?";
 		valid = new String[3]; valid[0] = DEFAULT; valid[1] = COPY; valid[2] = DATA;
