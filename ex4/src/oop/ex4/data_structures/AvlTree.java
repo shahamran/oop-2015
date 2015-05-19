@@ -193,12 +193,8 @@ public class AvlTree extends BstTree {
 	 * @return the minimum number of nodes in an AVL tree of the given height.
 	 */
 	public static int findMinNodes(int h) {
-		if (h < 0) 
+		if (h < 0) {
 			return 0;
-		if (h == 0) {
-			return 1;
-		} else if (h == 1) {
-			return 2;
 		} else {
 			return findMinNodes(h-1) + findMinNodes(h-2) + 1;
 		}
