@@ -23,7 +23,7 @@ public class AvlTree extends BstTree {
 	}
 	
 	/**
-	 * A copy constructor that creates a deep copy of the give AvlTree. This means that for
+	 * A copy constructor that creates a deep copy of the given AvlTree. This means that for
 	 * every node or any other internal object of the given tree, a new, identical object, is
 	 * instantiated for the new tree (the internal object is not simply referenced from it). The
 	 * new tree must contain all the values of the given tree, but not necessarily in the same
@@ -44,7 +44,7 @@ public class AvlTree extends BstTree {
 	 * false otherwise.
 	 */
 	public boolean add(int newValue) {
-		if (super.add(newValue)) {
+		if (super.add(newValue)) { // Check if the node was successfully added as a regular bst node.
 			setHeights(myRoot); // Update nodes' heights.
 			Node addedNode = getNodeWithVal(newValue); // Search the tree for the added node.
 			Node unbalancing = findUnbalancingNode(addedNode); // Check the AVL property.
@@ -80,12 +80,17 @@ public class AvlTree extends BstTree {
 		if (deleted != null) {
 			setHeights(myRoot);
 			Node unbalancing = findUnbalancingNode(deleted);
+			/* When deleting a node, we can have multiple AVL property breaks. We've seen in DAST that all
+			 * of them will be in the route between the deleted node and the root - so we check for that. */
 			while (unbalancing != null) {
 				fixAvl(unbalancing);
 				unbalancing = findUnbalancingNode(unbalancing);
 			}
 			return true;
 		} else {
+			/* This part determines whether we got null from the delete
+			 * method because it was deleted, or because the deleted node
+			 * didn't have a parent - meaning it is the root node. */
 			if (mySize == 0) {
 				return true;
 			} else {

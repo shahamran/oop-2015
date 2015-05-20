@@ -8,12 +8,21 @@ public class BstTree implements Iterable<Integer> {
 	protected Node myRoot;
 	protected int mySize;
 	protected static final int NOT_FOUND = -1;
-		
+	
+	/**
+	 * The default constructor.
+	 */
 	public BstTree() {
 		myRoot = null;
 		mySize = 0;
 	}
 	
+	/**
+	 * A constructor that builds the tree by adding the elements in the input array one by
+	 * one. If a value appears more that once in the list, only the first appearance is added.
+	 * 
+	 * @param data the values to add to the tree.
+	 */
 	public BstTree(int[] data) {
 		this();
 		if (data == null)
@@ -23,6 +32,11 @@ public class BstTree implements Iterable<Integer> {
 		}
 	}
 	
+	/**
+	 * A copy constructor that creates a deep copy of the given BstTree.
+	 * 
+	 * @param bstTree a BST tree.
+	 */
 	public BstTree(BstTree bstTree) {
 		this();
 		for (int val : bstTree) {
@@ -42,7 +56,7 @@ public class BstTree implements Iterable<Integer> {
 	 * false otherwise.
 	 */
 	public boolean add(int newValue) {
-		if (myRoot == null) {
+		if (myRoot == null) { // Special case for an empty tree.
 			myRoot = new Node(newValue);
 			mySize++;
 			return true;
@@ -60,14 +74,21 @@ public class BstTree implements Iterable<Integer> {
 				}
 			}
 		}
-		mySize++;
-		return last.setChild(newValue);
+		if (last.setChild(newValue)) {
+			mySize++;
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/*
 	 * Attempts to delete a node.
-	 * Will return a value (other than null) if the node exists and it has no more than ONE child.
-	 * Returns null if the node doesn't exists or it has 2 children.
+	 * Returns the following:  
+	 * If the deleted node isn't found - returns null.
+	 * If the deleted node has no children - returns its parent.
+	 * If the deleted node has one child - returns the child.
+	 * If the deleted node has two children - returns null.
 	 */
 	private Node deleteSimpleNode(Node x) {
 		if (x == null)
@@ -103,39 +124,51 @@ public class BstTree implements Iterable<Integer> {
 	
 	/*
 	 * Attempts to delete a node with a given value.
-	 * Returns the node
+	 * If there is no node with the given value - returns null.
+	 * If the deleted node was the only node in the tree (the root) - returns null.
+	 * If the deleted node had one child - returns it.
+	 * If the deleted node had two children - returns its replacement (the successor).
 	 */
 	protected Node deleteAndGet(int toDelete) {
 		Node nodeToDelete = getNodeWithVal(toDelete);
 		if (nodeToDelete == null) {
 			return null;
-		} else if (nodeToDelete.getKey() != toDelete) {
-			return null;
 		}
-		
-		Node parent = nodeToDelete.getParent(),
-			 left = nodeToDelete.getLeft(),
-			 right = nodeToDelete.getRight();
 		Node deleted = deleteSimpleNode(nodeToDelete); // Tries to delete the node.
 		if (mySize == 0)
 			return null;
 		if (deleted == null) { // This means the node has 2 children
-			deleted = successor(nodeToDelete);
-			deleteSimpleNode(deleted);
-			if (parent != null) {
-				if (toDelete < parent.getKey()) {
-					parent.setLeft(deleted);
-				} else {
-					parent.setRight(deleted);
-				}
-			} else {
-				myRoot = deleted;
-			}
-			deleted.setLeft(left);
-			deleted.setRight(right);
+			Node succ = successor(nodeToDelete);
+			deleteSimpleNode(succ); // Removes the successor from its place
+			replaceXwithY(deleted, succ);
+			return succ;
 		}
 		return deleted;
-		
+	}
+	
+	/*
+	 * Replaces a given node with another - which means - set the new node as a child of the
+	 * old-node's parent, set the old node's children as the new node's children.
+	 * NOTE: This removes the reference to the old node in the structure.
+	 */
+	private boolean replaceXwithY(Node toReplace, Node replacement) {
+		if (toReplace == null || replacement == null)
+			return false;
+		Node parent = toReplace.getParent(), 
+			 left = toReplace.getLeft(), right = toReplace.getRight();
+		int key = replacement.getKey();
+		if (parent == null) {
+			myRoot = replacement;
+		} else {
+			if (key < parent.getKey()) {
+				parent.setLeft(replacement);
+			} else {
+				parent.setRight(replacement);
+			}
+		}
+		replacement.setLeft(left);
+		replacement.setRight(right);
+		return true;
 	}
 	
 	/**
@@ -148,23 +181,22 @@ public class BstTree implements Iterable<Integer> {
 		if (contains(toDelete) == NOT_FOUND) {
 			return false;
 		}
+		// See the deleteAndGet description for details.
 		return deleteAndGet(toDelete) != null || mySize == 0;
 	}
 	
 	/**
 	 * Searches the tree for a node with a certain value.
-	 * Returns it if found, otherwise returns the node where it should be added.
+	 * Returns it if found, otherwise returns null.
 	 * @param searchVal The value to search for.
-	 * @return The node with the given value if it's in the tree, otherwise the node that will be its
-	 * parent if it is added.
+	 * @return The node with the given value if it's in the tree, null otherwise
 	 */
 	protected Node getNodeWithVal(int searchVal) {
-		Node current = myRoot,last = null;
+		Node current = myRoot;
 		while (current != null) {
 			if (searchVal == current.getKey()) {
 				return current;
 			} else {
-				last = current;
 				if (searchVal < current.getKey()) {
 					current = current.getLeft();
 				} else {
@@ -172,7 +204,7 @@ public class BstTree implements Iterable<Integer> {
 				}
 			}
 		}
-		return last;
+		return null;
 	}
 	
 	/**
@@ -265,7 +297,7 @@ public class BstTree implements Iterable<Integer> {
 	 */
 	public Iterator<Integer> iterator() {
 		/**
-		 * A local Iterator on bst trees.
+		 * A local Iterator on a BST tree.
 		 * @author ransha
 		 */
 		class BstIterator implements Iterator<Integer> {
