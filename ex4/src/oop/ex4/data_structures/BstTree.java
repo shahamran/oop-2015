@@ -43,11 +43,7 @@ public class BstTree implements Iterable<Integer> {
 			add(val);
 		}
 	}
-	
-	public Node getRoot() {
-		return myRoot;
-	}
-	
+
 	/**
 	 * Add a new node with the given key to the tree.
 	 * 
@@ -275,7 +271,6 @@ public class BstTree implements Iterable<Integer> {
 	protected static Node successor(Node x) {
 		if (x == null)
 			return null;
-
 		if (x.getRight() != null) 
 			return getMin(x.getRight());
 
@@ -297,7 +292,7 @@ public class BstTree implements Iterable<Integer> {
 	 */
 	public Iterator<Integer> iterator() {
 		/**
-		 * A local Iterator on a BST tree.
+		 * A local Iterator class on a BST tree.
 		 * @author ransha
 		 */
 		class BstIterator implements Iterator<Integer> {

@@ -255,5 +255,4 @@ public class AvlTree extends BstTree {
 			return LEAF_HEIGHT - 1;
 		return x.getHeight();	
 	}
-	
 }
