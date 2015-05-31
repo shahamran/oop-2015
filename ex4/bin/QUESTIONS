@@ -10,7 +10,7 @@
 #3: myMap.put(new B(), 6);
 #4: myMap.put(new Object(), new Integer(6));
 
-w6Answer1 = (0,0)
+w6Answer1 = (1,2,3)
 # The answer should be a python-tuple of the chosen numbers, i.e. (1,7,3,8) or (2,6,1)
 # optional explanation.
 
@@ -24,7 +24,7 @@ w6Answer1 = (0,0)
 #3: public class ComplexNumber extends Number<ComplexNumber> {}
 #4: public class ComplexNumber extends Number {}
 
-w6Answer2 = (0,0)
+w6Answer2 = (2,4)
 # The answer should be a python-tuple of the chosen numbers, i.e. (1,7,3,8) or (2,6,1)
 # optional explanation.
 
@@ -36,7 +36,7 @@ w6Answer2 = (0,0)
 #5: A Comparator<A> can be used to order objects of the type A, and of types extending A.
 #6: Comparators allow us to change the comparison methods of some class in runtime.
 
-w6Answer3 = (0,0)
+w6Answer3 = (2,5,6)
 # The answer should be a python-tuple of the chosen numbers, i.e. (1,7,3,8) or (2,6,1)
 # optional explanation.
 
@@ -54,7 +54,7 @@ w6Answer3 = (0,0)
 #1: Correct
 #2: Incorrect
 
-w7Answer1 = 0
+w7Answer1 = 1
 # optional explanation.
 
 # class ExceptionA extends Exception {}
@@ -66,7 +66,7 @@ w7Answer1 = 0
 #3: catch (ExceptionB | ExceptionC e) {...
 #4: catch (ExceptionC e) {...
 
-w7Answer2 = 0
+w7Answer2 = 4
 # optional explanation.
 
 #Which of the following is true? (single choice)
@@ -75,7 +75,7 @@ w7Answer2 = 0
 #3: Unchecked exceptions cannot be thrown by the throw key-word.
 #4: Methods can declare that they throw unchecked exceptions.
 
-w7Answer3 = 0
+w7Answer3 = 4
 # optional explanation.
 
 #Which of the following is NOT true? (single choice)
@@ -84,5 +84,5 @@ w7Answer3 = 0
 #3: A class doesn't have to extend class A to access its protected members.
 #4: Packages can be used to solve conflicting class names.
 
-w7Answer4 = 0
+w7Answer4 = 2
 # optional explanation.
