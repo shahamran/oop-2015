@@ -1,5 +1,7 @@
 package filescript.filters;
 
-public class FilterException extends Exception {
+import filescript.FileScriptException;
+
+public class FilterException extends FileScriptException {
 
 }
