@@ -91,7 +91,7 @@ public class FilterFactory {
 				throw new BadFilterArgumentsException();
 			}
 		} else if (filterName.equals(ALL)) {
-			expectedArgsLength = Filter.ONE_VALUE_FILTER_LENGTH;
+			expectedArgsLength = Filter.NO_VALUES_FILTER_LENGTH;
 			if (isLegalValues(expectedArgsLength,values)) {
 				outFilter = new AllFilter();
 			} else {

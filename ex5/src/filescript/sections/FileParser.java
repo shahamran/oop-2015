@@ -14,7 +14,6 @@ public class FileParser {
 	private static final char NEW_LINE = '\n', IGNORE = '\r';
 	private static final int MIN_ARGS_PER_SECTION = 2;
 	private static final String FILTER = "FILTER",ORDER = "ORDER", SEPERATOR = "#";
-	private static final String WARNING_MSG = "Warning in line ";
 	
 	public FileParser(File inFile) throws IOException {
 		fileContent = readFile(inFile);
@@ -27,7 +26,7 @@ public class FileParser {
 		while (moreSectionsToParse) {
 			sections[sectionsCount] = parseSection();
 			sectionsCount++;
-			moreSectionsToParse = currentLine + 1 < fileContent.length;
+			moreSectionsToParse = currentLine < fileContent.length;
 		}
 		Section[] oldSections = sections;
 		sections = new Section[sectionsCount];
@@ -74,28 +73,28 @@ public class FileParser {
 	}
 	
 	public Section parseSection() throws FileScriptException {
-		Filter filter = null; Order order = null;
+		Section section = new Section();
 		boolean parsingEnded = false;
 		while (!parsingEnded) {
 			try {
-				if (filter == null)
-					filter = parseFilter();
-				if (order == null)
-					order = parseOrder();
+				if (section.getFilter() == null)
+					section.setFilter(parseFilter());
+				if (section.getOrder() == null)
+					section.setOrder(parseOrder());
 				parsingEnded = true;
 			} catch (BadFilterArgumentsException badFilter) {
-				filter = new AllFilter();
-				System.out.println(WARNING_MSG + (currentLine + 1));
+				section.setFilter(new AllFilter());
+				badFilter.setLineNumber(currentLine);
+				section.addWarning(badFilter);
 				continue;
 			} catch (BadOrderNameException badOrder) {
-				order =  new AbsOrder();
-				System.out.println(WARNING_MSG + (currentLine + 1));
+				section.setOrder(new AbsOrder());
+				badOrder.setLineNumber(currentLine);
+				section.addWarning(badOrder);
 				continue;
-			} catch (Exception otherException) {
-				throw otherException;
 			}
 		}
-		return new Section(filter,order);
+		return section;
 		
 	}
 	
@@ -142,6 +141,7 @@ public class FileParser {
 			if (e.getBadName().equals(FILTER)) {
 				order = new AbsOrder();
 			} else {
+				currentLine++;
 				throw e;
 			}
 		} catch (ArrayIndexOutOfBoundsException badIndex) {

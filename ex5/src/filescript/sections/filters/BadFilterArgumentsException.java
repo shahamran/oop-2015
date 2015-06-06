@@ -4,7 +4,7 @@ public class BadFilterArgumentsException extends FilterException {
 	private static final long serialVersionUID = 1L;
 
 	public BadFilterArgumentsException() {
-		super("invalid filter arguments");
+		super("Invalid filter arguments");
 	}
 	
 	public BadFilterArgumentsException(String msg) {

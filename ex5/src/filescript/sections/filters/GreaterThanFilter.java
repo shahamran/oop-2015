@@ -4,7 +4,7 @@ public class GreaterThanFilter extends SizeFilter {
 	private static final int EXPECTED_VALUES = 2; 
 	
 	public GreaterThanFilter(double valInKB) throws BadFilterValueException {
-		long valInLong = Double.doubleToLongBits(valInKB * super.BYTES_IN_KB());
+		long valInLong = (long) (valInKB * super.BYTES_IN_KB());
 		if (valInLong < 0)
 			throw new BadFilterValueException(this, String.valueOf(valInLong));
 		lowerVal = valInLong;

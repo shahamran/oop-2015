@@ -9,7 +9,7 @@ import filescript.sections.orders.*;
 
 public class MyFileScript {
 	private static final int SOURCE_DIR_ARG = 0, COMMAND_FILE_ARG = 1, EXPECTED_ARGS = 2;
-	private static final String ERROR_MSG = "ERROR";
+	private static final String ERROR_MSG = "ERROR", WARNING_MSG = "Warning in line ";
 	
 	public static void main(String[] args) {
 		if (args.length != EXPECTED_ARGS) {
@@ -27,15 +27,19 @@ public class MyFileScript {
 		
 		try {
 			FileParser parser = new FileParser(commandFile);
-			sections = parser.parseFile();
+			sections = parser.parseFile();			
 		} catch (TypeTwoException e) {
-			System.err.println(e.getMessage());
-			//System.err.println(ERROR_MSG);
+			System.err.println(ERROR_MSG);
 			return;
 		} catch (Exception otherException) {
 			otherException.printStackTrace();
 		}
 		for (Section section : sections) {
+			if (section != null) {
+				for (TypeOneException warning : section.getWarnings()) {
+					System.err.println(WARNING_MSG + warning.getErrorLine());
+				}
+			}
 			handleSection(filesList,section);
 		}
 	}
