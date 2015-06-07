@@ -2,10 +2,19 @@ package filescript.sections.filters;
 
 import java.io.File;
 
+/**
+ * A general filter that passes files according to their permissions attributes.
+ * @author ransha
+ *
+ */
 public abstract class PermissionFilter implements Filter {
 	protected static final String YES = "YES", NO = "NO";
 	protected boolean myVal;
 	
+	/**
+	 * @param yesNo Accepts only "YES" or "NO" values.
+	 * @throws BadFilterValueException
+	 */
 	protected PermissionFilter(String yesNo) throws BadFilterValueException {
 		if (yesNo.equals(YES)) {
 			myVal = true;

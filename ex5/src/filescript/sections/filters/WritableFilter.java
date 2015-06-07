@@ -2,6 +2,10 @@ package filescript.sections.filters;
 
 import java.io.File;
 
+/**
+ * A filter that passes files with a given Writable permissions
+ * @author ransha
+ */
 public class WritableFilter extends PermissionFilter {
 	
 	public WritableFilter(String yesNo) throws BadFilterValueException {
@@ -17,10 +21,4 @@ public class WritableFilter extends PermissionFilter {
 		} 
 		return false;
 	}
-
-	@Override
-	public int getExpectedNumberOfValues() {
-		return ONE_VALUE_FILTER_LENGTH;
-	}
-
 }

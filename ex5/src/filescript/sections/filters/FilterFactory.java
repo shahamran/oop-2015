@@ -1,5 +1,9 @@
 package filescript.sections.filters;
 
+/**
+ * This class is in charge of creating new filter objects according to given values.
+ * @author ransha
+ */
 public class FilterFactory {
 	private static final String GREATER = "greater_than", SMALLER = "smaller_than", BETWEEN = "between",
 							FILE = "file", CONTAINS = "contains", PREFIX = "prefix", SUFFIX = "suffix",
@@ -12,107 +16,84 @@ public class FilterFactory {
 			return null;
 		
 		Filter outFilter = null;
-		double filterVal,filterSecond;
+		// The filter name should always be the first argument.
 		String filterName = values[0];
 		int expectedArgsLength;
-		
-		if (filterName.equals(GREATER)) {
+		// Switch statement uses an equivilent to s.equals() method and not reference comparison.
+		switch (filterName) {
+		case GREATER:
 			expectedArgsLength = Filter.ONE_VALUE_FILTER_LENGTH;
-			if (isLegalValues(expectedArgsLength,values)) {
-				filterVal = Double.parseDouble(values[FIRST_VAL]);
-				outFilter = new GreaterThanFilter(filterVal);
-			} else {
-				throw new BadFilterArgumentsException();
-			}
-		} else if (filterName.equals(SMALLER)) {
+			outFilter = new GreaterThanFilter(Double.parseDouble(values[FIRST_VAL]));
+			break;
+		case SMALLER:
 			expectedArgsLength = Filter.ONE_VALUE_FILTER_LENGTH;
-			if (isLegalValues(expectedArgsLength,values)) {
-				filterVal = Double.parseDouble(values[FIRST_VAL]);
-				outFilter = new SmallerThanFilter(filterVal);
-			} else {
-				throw new BadFilterArgumentsException();
-			}
-		} else if (filterName.equals(BETWEEN)) {
+			outFilter = new SmallerThanFilter(Double.parseDouble(values[FIRST_VAL]));
+			break;
+		case BETWEEN:
 			expectedArgsLength = Filter.TWO_VALUES_FILTER_LENGTH;
-			if (isLegalValues(expectedArgsLength,values)) {
-				filterVal = Double.parseDouble(values[FIRST_VAL]);
-				filterSecond = Double.parseDouble(values[SECOND_VAL]);
-				outFilter = new BetweenFilter(filterVal,filterSecond);
-			} else {
-				throw new BadFilterArgumentsException();
-			}
-		} else if (filterName.equals(FILE)) {
+			double first = Double.parseDouble(values[FIRST_VAL]), 
+				   second = Double.parseDouble(values[SECOND_VAL]);
+			outFilter = new BetweenFilter(first,second);
+			break;
+		case FILE:
 			expectedArgsLength = Filter.ONE_VALUE_FILTER_LENGTH;
-			if (isLegalValues(expectedArgsLength,values)) {
-				outFilter = new FileFilter(values[FIRST_VAL]);
-			} else {
-				throw new BadFilterArgumentsException();
-			}
-		} else if (filterName.equals(CONTAINS)) {
+			outFilter = new FileFilter(values[FIRST_VAL]);
+			break;
+		case CONTAINS:
 			expectedArgsLength = Filter.ONE_VALUE_FILTER_LENGTH;
-			if (isLegalValues(expectedArgsLength,values)) {
-				outFilter = new ContainsFilter(values[FIRST_VAL]);
-			} else {
-				throw new BadFilterArgumentsException();
-			}
-		} else if (filterName.equals(PREFIX)) {
+			outFilter = new ContainsFilter(values[FIRST_VAL]);
+			break;
+		case PREFIX:
 			expectedArgsLength = Filter.ONE_VALUE_FILTER_LENGTH;
-			if (isLegalValues(expectedArgsLength,values)) {
-				outFilter = new PrefixFilter(values[FIRST_VAL]);
-			} else {
-				throw new BadFilterArgumentsException();
-			}
-		} else if (filterName.equals(SUFFIX)) {
+			outFilter = new PrefixFilter(values[FIRST_VAL]);
+			break;
+		case SUFFIX:
 			expectedArgsLength = Filter.ONE_VALUE_FILTER_LENGTH;
-			if (isLegalValues(expectedArgsLength,values)) {
-				outFilter = new SuffixFilter(values[FIRST_VAL]);
-			} else {
-				throw new BadFilterArgumentsException();
-			}
-		} else if (filterName.equals(WRITABLE)) {
+			outFilter = new SuffixFilter(values[FIRST_VAL]);
+			break;
+		case WRITABLE:
 			expectedArgsLength = Filter.ONE_VALUE_FILTER_LENGTH;
-			if (isLegalValues(expectedArgsLength,values)) {
-				outFilter = new WritableFilter(values[FIRST_VAL]);
-			} else {
-				throw new BadFilterArgumentsException();
-			}
-		} else if (filterName.equals(EXECUTABLE)) {
+			outFilter = new WritableFilter(values[FIRST_VAL]);
+			break;
+		case EXECUTABLE:
 			expectedArgsLength = Filter.ONE_VALUE_FILTER_LENGTH;
-			if (isLegalValues(expectedArgsLength,values)) {
-				outFilter = new ExecutableFilter(values[FIRST_VAL]);
-			} else {
-				throw new BadFilterArgumentsException();
-			}
-		} else if (filterName.equals(HIDDEN)) {
+			outFilter = new ExecutableFilter(values[FIRST_VAL]);
+			break;
+		case HIDDEN:
 			expectedArgsLength = Filter.ONE_VALUE_FILTER_LENGTH;
-			if (isLegalValues(expectedArgsLength,values)) {
-				outFilter = new HiddenFilter(values[FIRST_VAL]);
-			} else {
-				throw new BadFilterArgumentsException();
-			}
-		} else if (filterName.equals(ALL)) {
-			expectedArgsLength = Filter.ONE_VALUE_FILTER_LENGTH;
-			if (isLegalValues(expectedArgsLength,values)) {
-				outFilter = new AllFilter();
-			} else {
-				throw new BadFilterArgumentsException();
-			}
-		} else {
-			throw new BadFilterNameException(filterName);
+			outFilter = new HiddenFilter(values[FIRST_VAL]);
+			break;
+		case ALL:
+			expectedArgsLength = Filter.NO_VALUES_FILTER_LENGTH;
+			outFilter = new AllFilter();
+			break;
+			default:
+				// If other filter name was given, throw an exception.
+				throw new BadFilterNameException(filterName);
 		}
 		
-		if (isNegFilter(expectedArgsLength,values)) {
+		if (!isLegalValues(expectedArgsLength, values)) 
+			throw new BadFilterValueException();
+		if (isNegFilter(expectedArgsLength, values))
 			outFilter = new NegFilter(outFilter);
-		}
-		
-		return outFilter;	
+		return outFilter;
 	}
 	
+	/**
+	 * @param expectedNumberOfValues The expected number of arguments.
+	 * @param args The string args that were given.
+	 * @return True if the right number of values was given, false otherwise.
+	 */
 	private static boolean isLegalValues(int expectedNumberOfValues, String[] args) {
 		return (args.length == expectedNumberOfValues ||
 				isNegFilter(expectedNumberOfValues,args));
 	}
 	
+	/**
+	 * @param expectedNumberOfValues The expected number of arguments.
+	 * @param args The string args that were given.
+	 * @return True if exactly one more argument was given, and the argument is "NOT"
+	 */
 	private static boolean isNegFilter(int expectedNumberOfValues, String[] args) {
 		return (args.length == expectedNumberOfValues + 1) &&
 				(args[expectedNumberOfValues].equals(NOT));

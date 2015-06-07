@@ -1,0 +1,62 @@
+ransha
+
+
+===================
+=  README for ex5 =
+===================
+
+==================
+=  Description:  =
+==================
+
+A simple script that filters files in a given directory and prints their names in a certain order.
+
+=============================
+=  List of submitted files: =
+=============================
+README					This file.
+MyFileScript.java 		The manager module of this program. Gets the arguments and prints the output.
+FileScriptException.java			A general filescript exception.
+BadScriptArgumentsException.java	An exception thrown when invalid arguments were given.
+TypeOneException.java	A general non-critical exception in the program (warning).
+TypeTwoException.java	A general critical exception in the program (ERROR).
+FileParser.java			The file that parses the command files and returns Section objects.
+BadCommandFileException.java		An exception thrown if a bad command file was given.
+Section.java			A section object - contains filter and order objects.
+__FILTERS__
+Filter.java				The filter interface.
+FilterException.java	A general filter exception.
+BadFilterArgumentsException.java	Thrown when bad filter arguments are given.
+BadFilterNameException.java			Extends the last one, self explanatory.
+BadFilterValueException.java		Same.
+AllFilter.java			A filter that passes all files.
+NameFilter.java			A general filter that uses strings to pass files.
+SizeFilter.java			A general filter that uses the file's size to pass files.
+PermissionFilter.java	A general filter that uses the file's permissions to pass files.
+ContainsFilter.java		A filter that passes files with a certain string in their name
+SuffixFilter.java		Passes a file with a given suffix.
+PrefixFilter.java		Passes a file with a given prefix.
+FileFilter.java			Passes a file with a given name.
+BetweenFilter.java		Passes a file with a size between two given values.
+GreaterThanFilter.java	Passes a file with a size greater than a given value.
+SmallerThanFilter.java	Passes a file with a size smaller than a given value.
+WritableFilter.java		Passes a file with given writable attributes.
+ExectuableFilter.java	Passes a file with given exectuable attributes.
+HiddenFilter.java		Passes a file with given hidden attributes.
+NegFilter.java			A decorator object that contains a filter and return the opposite for isPass();
+FilterFactory.java		A class that creates different filters according to given string.	
+__ORDERS__
+Order.java			An abstract order class.
+OrderException.java			a general exception for order objects.
+BadOrderNameException.java	Thrown when a bad order name is given.
+BadOrderValuesException.java	Thrown if anything other than name and reverse arguments were given.
+AbsOrder.java	The default order - by absolute paths.
+SizeOrder.java	Orders by file sizes
+TypeOrder.java	Orders by file extensions.
+ReverseOrder.java	A decorator class for orders.
+OrderFactory.java	A class that creates different orders according to given string.
+
+==========
+= NOTES  =
+==========
+	

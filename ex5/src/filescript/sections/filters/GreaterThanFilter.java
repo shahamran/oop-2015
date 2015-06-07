@@ -1,7 +1,10 @@
 package filescript.sections.filters;
 
+/**
+ * A filter that passes files with more than a given size.
+ * @author ransha
+ */
 public class GreaterThanFilter extends SizeFilter {
-	private static final int EXPECTED_VALUES = 2; 
 	
 	public GreaterThanFilter(double valInKB) throws BadFilterValueException {
 		long valInLong = Double.doubleToLongBits(valInKB * super.BYTES_IN_KB());
@@ -9,10 +12,4 @@ public class GreaterThanFilter extends SizeFilter {
 			throw new BadFilterValueException(this, String.valueOf(valInLong));
 		lowerVal = valInLong;
 	}
-
-	@Override
-	public int getExpectedNumberOfValues() {
-		return EXPECTED_VALUES;
-	}
-
 }

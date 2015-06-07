@@ -2,8 +2,15 @@ package filescript.sections.filters;
 
 import java.io.File;
 
+/**
+ * A filter that passes a certain file name
+ * @author ransha
+ */
 public class FileFilter extends NameFilter {
 	
+	/**
+	 * @param file The file name to pass
+	 */
 	public FileFilter(String file) {
 		this.fileName = file;
 	}
@@ -17,10 +24,4 @@ public class FileFilter extends NameFilter {
 		}
 		return false;
 	}
-
-	@Override
-	public int getExpectedNumberOfValues() {
-		return ONE_VALUE_FILTER_LENGTH;
-	}
-
 }

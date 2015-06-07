@@ -1,5 +1,9 @@
 package filescript.sections.filters;
 
+/**
+ * Results from illegal name in the filter's name field.
+ * @author ransha
+ */
 public class BadFilterNameException extends BadFilterArgumentsException {
 	private static final long serialVersionUID = 1L;
 	private String badVal;

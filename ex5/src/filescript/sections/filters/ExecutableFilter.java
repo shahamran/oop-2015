@@ -2,8 +2,16 @@ package filescript.sections.filters;
 
 import java.io.File;
 
+/**
+ * A filter that checks if the file is exectuable or not.
+ * @author ransha
+ */
 public class ExecutableFilter extends PermissionFilter {
 	
+	/**
+	 * @param yesNo only "YES" or "NO" values accepted
+	 * @throws BadFilterValueException
+	 */
 	public ExecutableFilter(String yesNo) throws BadFilterValueException {
 		super(yesNo);
 	}
@@ -17,10 +25,4 @@ public class ExecutableFilter extends PermissionFilter {
 		} 
 		return false;
 	}
-
-	@Override
-	public int getExpectedNumberOfValues() {
-		return ONE_VALUE_FILTER_LENGTH;
-	}
-
 }

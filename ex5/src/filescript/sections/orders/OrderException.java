@@ -1,8 +1,12 @@
 package filescript.sections.orders;
 
-import filescript.FileScriptException;
+import filescript.TypeOneException;
 
-public abstract class OrderException extends FileScriptException {
+/**
+ * A general non-critical exception in the orders sub-section.
+ * @author ransha
+ */
+public abstract class OrderException extends TypeOneException {
 	private static final long serialVersionUID = 1L;
 
 	public OrderException(String msg) {

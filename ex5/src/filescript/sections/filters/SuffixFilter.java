@@ -2,6 +2,10 @@ package filescript.sections.filters;
 
 import java.io.File;
 
+/**
+ * A filter that passes files with a given suffix. 
+ * @author ransha
+ */
 public class SuffixFilter extends NameFilter {
 
 	public SuffixFilter(String suffix) {
@@ -17,10 +21,4 @@ public class SuffixFilter extends NameFilter {
 		}
 		return false;
 	}
-
-	@Override
-	public int getExpectedNumberOfValues() {
-		return ONE_VALUE_FILTER_LENGTH;
-	}
-
 }

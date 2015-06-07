@@ -2,8 +2,15 @@ package filescript.sections.filters;
 
 import java.io.File;
 
+/**
+ * A filter that checks if the filename contains a given string
+ * @author ransha
+ */
 public class ContainsFilter extends NameFilter {
-
+	
+	/**
+	 * @param containsWhat The string to check.
+	 */
 	public ContainsFilter(String containsWhat) {
 		this.searchVal = containsWhat;
 	}
@@ -17,10 +24,4 @@ public class ContainsFilter extends NameFilter {
 		}
 		return false;
 	}
-
-	@Override
-	public int getExpectedNumberOfValues() {
-		return ONE_VALUE_FILTER_LENGTH;
-	}
-
 }
