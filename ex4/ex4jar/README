@@ -1,0 +1,78 @@
+ransha
+
+
+===================
+=  README for ex4 =
+===================
+
+==================
+=  Description:  =
+==================
+
+My implementation of an AVL tree :)
+
+=============================
+=  List of submitted files: =
+=============================
+README			This file.
+AvlTree.java	The main class of this exercise. Implementation of an AVL tree that inherits from BstTree
+				class. Supports add(), delete(), contains(), size() methods, has more helper methods.
+BstTree.java	An implementation of a BST tree (AVL tree -IS-A- BST tree).
+Node.java		An object that represents a node in a binary tree - has a parent, left child,
+				right child and height values. BstTree and AvlTree -HAS-A- Node object (several...)
+
+
+==========
+= NOTES  =
+==========
+
+__IMPLEMENTATION_OF_ADD_REMOVE__
+
+All parts concerning adding and deleting nodes from a BST is implemented in the BstTree class. The AVL
+class checks if the addition/deletion has broken the balance in the tree - and if so - both of the methods
+call the helper methods - fixAvl(Node unbalancing); findUnbalancingNode(Node x); setHeights();
+
+I added the node regularly to the tree (using super.add()). Then, if it was added successfuly, I searched
+for the added node using a helper method getNodeWithVal(int). Then I checked every node in the course
+between it and the root for AVL property break, and if such was found it was fixed using fixAvl()
+(which uses rotateXX where XX can be RR,RL,LR,LL).
+
+Deletion was a bit more complex. I can't know from where the node was removed If I remove it like the 
+regular BST, so I created a method deleteAndGet() which returns the deleted node's replacement if such
+exists. Then I checked every node from it to the root for AVL breaks - If such was found I used fixAvl()
+again to fix it, AND KEPT CLIMBING TO THE ROOT TO CHECK FOR MORE BREAKS because when deleting, more than one
+AVL property break can occur.
+
+Another helpful method is the deleteAndGet() method which is implemented in the BstTree class.
+
+__MINIMAL_AVL_WITH_HEIGHT_OF_4__
+
+Lemma: 
+Suppose T is a minimal AVL tree in the height of n > 1.
+T's root has 2 children - 1 in the height of n-1 and the other in the height of n-2 - thats because the
+height of the root is max{left(root),right(root)}, so one of them is exactly in the height of n-1 and the
+other must be smaller than the big one because otherwise it wasn't a minimal AVL (if smaller than that,
+it's not an AVL at all).
+Each of the children is a minimal AVL tree (if they weren't, T wasn't a minimal tree).
+
+from the lemma, we know that a minimal AVL in the height of 4 has one child which is a minimal AVL
+(lets assume it is the right child) with the height of 3, and the right child is a minimal AVL with the
+height of 2.
+We know that minimal AVLs in the height of 3 and 2 have 7 and 4 nodes respectively, so our tree has
+7+4+1 nodes = 12 nodes. Therefore, the order should be:
+	5,2,8,1,3,7,10,4,6,9,11,12
+	"AVL"ize
+	=======>
+
+				 5
+			  _/  \___ 
+			 /    	  \____
+		  	/			   \
+	   _ 2				   _8__
+	  /   \_			  /	   \
+	 1		3			7		10
+			  \		  /		  /	   \
+				4 	6		9		11
+									  \
+									   12
+				
