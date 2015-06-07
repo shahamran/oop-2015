@@ -1,0 +1,11 @@
+FILTER
+suffix#.txt
+ORDER
+abs
+FILTER
+Suffix#.txt
+ORDER
+FILTER
+all#NOT
+ORDER
+type

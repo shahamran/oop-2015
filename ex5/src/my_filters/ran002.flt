@@ -1,0 +1,16 @@
+FILTER
+prefix#same
+ORDER
+size#REVERSE
+FILTER
+greater_than#0.3
+ORDER
+Baruh
+FILTER
+between#0.1#0.6#NOT
+ORDER
+size
+FILTER
+SAD
+ORDERs
+SADf
