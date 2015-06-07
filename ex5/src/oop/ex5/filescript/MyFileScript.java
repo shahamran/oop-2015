@@ -3,10 +3,9 @@ package oop.ex5.filescript;
 import java.io.File;
 import java.util.*;
 
+import oop.ex5.filescript.filters.*;
+import oop.ex5.filescript.orders.*;
 import oop.ex5.filescript.parsing.*;
-import oop.ex5.filescript.sections.*;
-import oop.ex5.filescript.sections.filters.*;
-import oop.ex5.filescript.sections.orders.*;
 
 
 /**
@@ -65,6 +64,7 @@ public class MyFileScript {
 		}
 		// Extracts Filter and Order from the section
 		Filter filter = section.getFilter(); Order order = section.getOrder();
+		// Get relevant files
 		filesList = getRelevantFiles(filesList, filter);
 		// Sorts the files using the *order* comparator, (O(nlogn) sorting according to the API).
 		Collections.sort(filesList, order);
@@ -82,6 +82,7 @@ public class MyFileScript {
 	private static List<File> getRelevantFiles(List<File> filesList, Filter filter) {
 		List<File> newList = new ArrayList<>();
 		for (File f : filesList) {
+			// Check if it is a file and if it passes the filter.
 			if (f.exists() && f.isFile() && filter.isPass(f) ) {
 				newList.add(f);
 			}

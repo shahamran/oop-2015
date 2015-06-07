@@ -9,12 +9,13 @@ ransha
 =  Description:  =
 ==================
 
-A simple script that filters files in a given directory and prints their names in a certain order.
+My implementation of a script that filters and sorts files in a given directory.
 
 =============================
 =  List of submitted files: =
 =============================
 README					This file.
+QUESTIONS				The questions file.
 MyFileScript.java 		The manager module of this program. Gets the arguments and prints the output.
 FileScriptException.java			A general filescript exception.
 BadScriptArgumentsException.java	An exception thrown when invalid arguments were given.
@@ -59,4 +60,67 @@ OrderFactory.java	A class that creates different orders according to given strin
 ==========
 = NOTES  =
 ==========
-	
+
+__About_my_design__
+I implemented the modular design suggested in the TA.
+*All the packages I wrote are sub-packages of the filescript package -- because although they are
+ independent to one another, they all form together the FileScript and have no real usage outside it.
+*The Manager module is NOT a package - but a class (MyFileScript), and so is the Section module.
+*There is some hierarchy inside the different modules - I think all of it is pretty straight forward
+ and understandable so I don't see a reason to explain it in detail. Basiclly, all filter that share
+ a basic attribute (filter by strings, sizes, permissions) extend a more general abstract filter that
+ has some common methods to reduce code duplicates. All orders extend AbsOrder because it is the default
+ order and when they fail to compare they use its compare method.
+*Of course, NegFilter and ReverseOrder are both decorator classes - they hold a filter/order object as
+ a data member and return its negation when asked.
+*A bit about SizeFilters - As said, all size filters extend the abstract SizeFilter that implements 
+ a helper method - isPass(File f, boolean canBeEqual) which determine if the file size is between
+ desired limits. If the file size is F, the lower limit is L and the upper is U, the boolean in this method
+ determines whether to check if (L <= F <= U) or (L < F < U) (for between filter).
+ I wrote this to be able to use this method also for GreaterThan and SmallerThan methods which demand
+ strong inequality, opposed to BetweenFilter that demands a weak inequality.
+*Note that the factories use the switch statement which according to its API work as if it uses
+ string.compare() method - so the comparison is of course being done logically and not reference-wise.
+
+__About_Exceptions__
+Hierarchy: (legend: (a) = abstract; tab space = extends)
+FileScriptException (a)
+	TypeOneException (a)
+	|	FilterException (a)
+	|	|	BadFilterArgumentsException (a)
+	|	|	|	BadFilterNameException
+	|	|	|	BadFilterValueException
+	|	OrderException (a)
+	|	|	BadOrderNameException
+	|	|	BadOrderValuesException
+	|
+	TypeTwoException (a)
+		BadScriptArgumentsException
+		BadCommandFileException
+		(IOException) (I didn't make this one of course, yet it still is treated as type ii)
+		
+*The clear distinction between Type I and Type II exception is obvious - the treatment to each is 
+ completly different. Also, Type I exception objects also contain a line number data member.
+*Inside Type I: The distinction between filter and order exception is due to the fact they are parts
+ of differente modules - they are independent to one another thus each have an independent exceptions
+ system and hierarchy - but both extend type I exception so the treatment is still somehow connected.
+*Inside Filter/Order: The distinction between BadName and BadValue isn't critical, I thought it was still
+ important to make this distinction to ease future changes and extensions in those modules. Furthermore,
+ I didn't want to make more specific exceptions inside those modules because I thought it will be too much
+ description - and will make the code less understandable (more is less in this case).
+ The exceptions that now exist in these modules is enough to treat the expected cases and more.
+*Inside Type II: These exceptions are really straight forward in my opinion. I can't see how making
+ more specific and detailed type ii exceptions will help me in any way.
+
+__About_sorting_and_data_structures__
+*I used java's ArrayList<File> class to store the matched files for 2 reasons: It is easy to add/remove
+ files, it is relatively fast to sort it (relative to LinkedList for example).
+*I used LinkedList to store the sections that are extracted from the commands files.
+ That's because no further treatment (sorting and such) is needed after extraction, and the adding and
+ iterating is as fast as it gets - complexity of O(1) for adding and O(n) for iterating on worst case.
+ In ArrayList adding can sometimes be O(n) (when the list size changes- as we have seen).
+*I used java's Collections.sort() to sort the matched list using my Comparator - according to its API
+ it is a very efficiend merge sort (they gurantee much faster than O(nlgn) for already -kind-of- sorted
+ lists and O(nlgn) for messy ones).
+
+ 

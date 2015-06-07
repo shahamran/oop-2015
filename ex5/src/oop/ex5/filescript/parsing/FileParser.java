@@ -4,9 +4,8 @@ package oop.ex5.filescript.parsing;
 import java.io.*;
 
 import oop.ex5.filescript.*;
-import oop.ex5.filescript.sections.*;
-import oop.ex5.filescript.sections.filters.*;
-import oop.ex5.filescript.sections.orders.*;
+import oop.ex5.filescript.filters.*;
+import oop.ex5.filescript.orders.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
