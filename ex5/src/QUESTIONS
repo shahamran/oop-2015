@@ -19,7 +19,7 @@ w8Answer1 = 3
 #3: A Factory may be a class, an interface, or a method.
 #4: The constructors of a Singleton class must not be public.
 
-w8Answer2 = 0
+w8Answer2 = 3
 # optional explanation.
 
 #Choose all correct statements:
@@ -33,7 +33,7 @@ w8Answer2 = 0
 #5: The open-closed principle says that a module should be open for modification but closed to extension.
 #6: A class that all its fields and methods are static can also be called a Singleton.
 
-w8Answer3 = (0,0,0)
+w8Answer3 = (1,2,3)
 # The answer should be a group of the chosen numbers, i.e. (1,7) or (2,6,1), etc'.
 # optional explanation.
 
@@ -58,7 +58,7 @@ w9Answer1 = 4
 #   extends InputStream that uses decompression.
 #4: Creating a class that extends InputStream and add buffered reading and a decompression capability to it.
 
-w9Answer2 = 0
+w9Answer2 = 3
 # optional explanation.
 
 # If A decorates B then A also composes B.
@@ -74,5 +74,5 @@ w9Answer3 = 1
 #3: BufferedInputStream's constructor can receive another BufferedInputStream as a parameter.
 #4: In Java, when we read a files content, or we write content to a file, an I/O exception might occur.
 
-w9Answer4 = 0
+w9Answer4 = 2
 # optional explanation.
