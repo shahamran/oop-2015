@@ -20,6 +20,6 @@ public class ReverseOrder extends Order {
 	
 	@Override
 	public int compare(File o1, File o2) {
-		return REVERSE * (myOrder.compare(o1,  o1));
+		return (REVERSE * (myOrder.compare(o1,  o1)));
 	}
 }
